@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:ignore="SpUsage">
+
+    <ImageView
+        android:id="@+id/iv_back"
+        android:layout_width="wrap_content"
+        android:layout_height="200dp"
+        android:src="@drawable/iv_menu_back"
+        tools:ignore="ContentDescription" />
+
+    <ImageView
+        android:id="@+id/user_haedimg"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_marginStart="30dp"
+        android:layout_marginTop="34dp"
+        android:src="@drawable/ic_head_man"
+        tools:ignore="ContentDescription" />
+
+    <TextView
+        android:id="@+id/user_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="30dp"
+        android:layout_marginTop="16dp"
+        android:layout_below="@id/user_haedimg"
+        android:text="唐尕漪"
+        android:textColor="@color/color_white"
+        android:textSize="26sp"
+        tools:ignore="RelativeOverlap" />
+
+    <TextView
+        android:id="@+id/clinic"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="30dp"
+        android:layout_marginTop="10dp"
+        android:layout_below="@id/user_name"
+        android:text="致医健康大兴未来诊所"
+        android:textColor="@android:color/white"
+        android:textSize="20sp"
+        tools:ignore="RelativeOverlap" />
+
+    <ImageView
+        android:id="@+id/two_code"
+        android:layout_width="29dp"
+        android:layout_height="29dp"
+        android:layout_alignParentEnd="true"
+        android:layout_marginTop="134dp"
+        android:layout_marginEnd="15dp"
+        android:visibility="gone"
+        tools:ignore="ContentDescription" />
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/drawer_rlv"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/iv_back" />
+</RelativeLayout>

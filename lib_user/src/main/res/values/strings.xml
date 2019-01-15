@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">lib_user</string>
+    <string name="title_activity_login">LoginActivity</string>
+</resources>

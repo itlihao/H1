@@ -1,0 +1,18 @@
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- 先画一遍边框颜色 -->
+    <item>
+        <shape>
+            <solid android:color="@color/color_4D4D4D" />
+            <corners android:bottomLeftRadius="24dp" />
+        </shape>
+    </item>
+    <!-- 再画背景颜色 并且设置需要边框边的margin为边框宽度 -->
+    <item
+        android:right="1.5dp"
+        android:top="1.5dp">
+        <shape>
+            <solid android:color="@color/color_white" />
+            <corners android:bottomLeftRadius="24dp" />
+        </shape>
+    </item>
+</layer-list>

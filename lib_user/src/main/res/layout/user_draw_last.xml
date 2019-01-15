@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/last_rll"
+    android:layout_width="match_parent"
+    android:layout_height="80dp"
+    tools:ignore="SpUsage">
+
+    <TextView
+        android:id="@+id/last_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_marginStart="30dp"
+        android:text="快速挂号模式"
+        android:textColor="@color/color_66"
+        android:textSize="24sp" />
+
+    <Switch
+        android:id="@+id/on_off"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginEnd="30dp"
+        android:visibility="visible"/>
+</RelativeLayout>

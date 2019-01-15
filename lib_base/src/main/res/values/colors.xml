@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#147AE0</color>
+    <color name="colorPrimaryDark">#147AE0</color>
+    <color name="colorAccent">#147AE0</color>
+
+    <color name="color_main_back">#E2F1FF</color>
+
+    <color name="color_white">#FFFFFF</color>
+    <color name="color_1A">#1A1A1A</color>
+    <color name="color_D9">#D9D9D9</color>
+    <color name="color_B5">#B5B5B5</color>
+    <color name="color_D5">#D5D5D5</color>
+    <color name="color_E5">#E5E5E5</color>
+    <color name="color_C5">#C5C5C5</color>
+    <color name="color_3999FF">#3999FF</color>
+    <color name="color_99">#999999</color>
+    <color name="color_33">#333333</color>
+    <color name="color_66">#666666</color>
+    <color name="color_7B">#7B7B7B </color>
+    <color name="color_FF7715">#FF7715</color>
+    <color name="color_FCFCFC">#FCFCFC</color>
+    <color name="color_4DA2F2">#4DA2F2</color>
+    <color name="color_0177FA">#0177FA</color>
+    <color name="color_4D4D4D">#C74D4D4D</color>
+    <color name="corner_Lable">#fd772a</color>
+
+    <color name="md_dialog_green_light">#ff4bd1c8</color>
+    <color name="md_dialog_green_dark">#ff2ca99f</color>
+    <color name="md_dialog_gray_dark">#99666666</color>
+    <color name="md_dialog_trans">#00000000</color>
+    <color name="md_dialog_divider_dark">#66999999</color>
+    <color name="md_dialog_divider_light">#44999999</color>
+    <color name="md_dialog_black_light">#aa111111</color>
+
+    <color name="user_0000FF">#0000FF</color>
+    <color name="user_FFFF00">#FFFF00</color>
+    <color name="user_BDBDBD">#BDBDBD</color>
+    <color name="user_FAFAFA">#FAFAFA</color>
+</resources>
