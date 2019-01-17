@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:background="#30999999"
+    android:orientation="vertical">
+
+    <com.android.inputmethod.pinyin.NewCandidatesContainer
+        android:id="@+id/candidate_container"
+        android:layout_width="846dp"
+        android:layout_height="58dp"
+        android:background="@color/color_879099"
+        android:visibility="gone">
+
+        <ImageButton
+            android:id="@+id/arrow_left_btn"
+            android:layout_width="40dip"
+            android:layout_height="match_parent"
+            android:layout_alignParentStart="true"
+            android:background="@drawable/arrow_bg"
+            android:clickable="true"
+            android:src="@drawable/arrow_left" />
+
+        <ImageButton
+            android:id="@+id/arrow_right_btn"
+            android:layout_width="40dip"
+            android:layout_height="match_parent"
+            android:layout_alignParentEnd="true"
+            android:background="@drawable/arrow_bg"
+            android:clickable="true"
+            android:src="@drawable/arrow_right" />
+
+        <ViewFlipper
+            android:id="@+id/candidate_flipper"
+            android:layout_width="846dp"
+            android:layout_height="58dp"
+            android:layout_toStartOf="@id/arrow_right_btn"
+            android:layout_toEndOf="@id/arrow_left_btn">
+
+            <view
+                android:id="@+id/candidate_view1"
+                class="com.android.inputmethod.pinyin.NewCandidateView"
+                android:layout_width="846dp"
+                android:layout_height="58dp" />
+
+            <view
+                android:id="@+id/candidate_view2"
+                class="com.android.inputmethod.pinyin.NewCandidateView"
+                android:layout_width="846dp"
+                android:layout_height="58dp" />
+        </ViewFlipper>
+    </com.android.inputmethod.pinyin.NewCandidatesContainer>
+
+    <FrameLayout
+        android:id="@+id/search_edit_frame"
+        android:layout_width="846dp"
+        android:layout_height="wrap_content"
+        android:visibility="gone">
+        <LinearLayout
+            android:layout_width="846dp"
+            android:layout_height="wrap_content"
+            android:background="@color/color_879099"
+            android:orientation="vertical"
+            tools:ignore="UselessParent">
+
+            <registration.zhiyihealth.com.lib_ime.view.MyKeyboardView
+                android:id="@+id/keyboard_view"
+                android:shadowRadius="0.0"
+                android:layout_width="846dp"
+                android:layout_height="wrap_content"
+                android:focusable="true"
+                android:focusableInTouchMode="true"
+                android:keyPreviewLayout="@layout/key_preview_layout"
+                android:keyPreviewHeight="64dp"
+                android:keyPreviewOffset="-20dp"
+                android:background="@null"
+                android:keyBackground="@drawable/btn_keyboard_key"
+                android:keyTextColor="@color/color_1A"
+                android:keyTextSize="30sp"
+                android:paddingTop="10dp"
+                android:paddingEnd="10dp"
+                android:paddingBottom="20dp"
+                android:visibility="visible"
+                tools:ignore="RtlSymmetry" />
+        </LinearLayout>
+
+    </FrameLayout>
+</LinearLayout>
+
+

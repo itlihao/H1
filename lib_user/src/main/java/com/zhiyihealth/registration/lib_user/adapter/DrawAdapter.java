@@ -1,6 +1,8 @@
 package com.zhiyihealth.registration.lib_user.adapter;
 
 import android.content.Context;
+import android.view.View;
+import android.widget.CompoundButton;
 
 import com.chad.library.adapter.base.BaseMultiItemQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
@@ -13,17 +15,18 @@ import com.zhiyihealth.registration.lib_user.bean.MenuItem;
 import java.util.ArrayList;
 
 /**
- *
  * @author zyjk654764
  * @date 2018/9/4
  */
 
-public class DrawAdapter extends BaseMultiItemQuickAdapter<EmnuLeft, BaseViewHolder> {
+public class DrawAdapter extends BaseMultiItemQuickAdapter<EmnuLeft, BaseViewHolder> implements CompoundButton.OnCheckedChangeListener {
 
     private Context context;
 
     private static String needPringList = "needPrint";
-    private static String MODEL_QUICK = "quickRegistration";
+    public static String MODEL_QUICK = "quickRegistration";
+
+    private OnCheckedChangedListener changedListener;
 
     public DrawAdapter(Context context, ArrayList list) {
         super(list);
@@ -49,14 +52,7 @@ public class DrawAdapter extends BaseMultiItemQuickAdapter<EmnuLeft, BaseViewHol
                     case MenuItem.FAST_REGISTER:
                         boolean quickModel = (boolean) SPDataSource.get(mContext, MODEL_QUICK, true);
                         helper.setChecked(R.id.on_off, quickModel);
-                        helper.setOnCheckedChangeListener(R.id.on_off, (buttonView, isChecked) -> {
-                            SPDataSource.put(mContext, MODEL_QUICK, isChecked);
-                            if (isChecked) {
-                                // 跳转到快速挂号页面
-                            } else {
-                                // 跳转到挂号页面
-                            }
-                        });
+                        helper.setOnCheckedChangeListener(R.id.on_off, this);
                         break;
                     default:
                         helper.setOnCheckedChangeListener(R.id.on_off, (buttonView, isChecked) -> ToastUtils.showToast(context, "敬请期待"));
@@ -68,5 +64,18 @@ public class DrawAdapter extends BaseMultiItemQuickAdapter<EmnuLeft, BaseViewHol
         }
     }
 
+    @Override
+    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+        if (changedListener != null) {
+            changedListener.onCheckedChanged(buttonView, isChecked);
+        }
+    }
 
+    public interface OnCheckedChangedListener {
+        void onCheckedChanged(View view, boolean isChecked);
+    }
+
+    public void setCheckedChangedListener(OnCheckedChangedListener clickListener) {
+        this.changedListener = clickListener;
+    }
 }

@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Keyboard xmlns:android="http://schemas.android.com/apk/res/android"
+    android:keyWidth="140dp" android:horizontalGap="32dp"
+    android:verticalGap="15dp" android:keyHeight="58dp">
+
+    <Row>
+        <Key android:codes="8" android:keyEdgeFlags="left"
+            android:keyLabel="1"  />
+        <Key android:codes="9" android:keyLabel="2" />
+        <Key android:codes="10" android:keyLabel="3" />
+        <Key android:codes="11" android:keyLabel="4" />
+        <Key android:keyWidth="106dp" android:codes="-5"
+            android:horizontalGap="32dp"
+            android:keyEdgeFlags="right" android:isRepeatable="true" />
+    </Row>
+
+    <Row>
+        <Key android:codes="12" android:keyEdgeFlags="left"
+            android:keyLabel="5"  />
+        <Key android:codes="13" android:keyLabel="6" />
+        <Key android:codes="14" android:keyLabel="7" />
+        <Key android:codes="15" android:keyLabel="8" />
+        <Key android:keyWidth="106dp" android:codes="-8" android:keyLabel="中/英" android:keyEdgeFlags="right" android:isModifier="true"
+            android:horizontalGap="32dp"
+            android:isSticky="true"/>
+    </Row>
+
+    <Row>
+        <Key android:codes="16" android:keyEdgeFlags="left"
+            android:keyLabel="9"  />
+        <Key android:codes="7" android:keyLabel="0" />
+        <Key android:codes="56" android:keyLabel="." />
+        <Key android:keyWidth="144dp" android:codes="-9" android:keyLabel="关闭" android:keyEdgeFlags="right" android:isModifier="true"
+            android:horizontalGap="166dp"
+            android:isSticky="true"/>
+    </Row>
+
+</Keyboard>

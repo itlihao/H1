@@ -125,10 +125,19 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
 
     @Override
     public void onLoginResult(LoginContent result) {
-        cc = CC.obtainBuilder(Components.COMPONENT_APP_MAIN)
-                .setActionName(Components.COMPONENT_APP_JUMP)
-                .addParam("token",result.getUserToken())
-                .build();
+        boolean quickModel = (boolean) SPDataSource.get(this, "quickRegistration", true);
+        if (quickModel) {
+            cc = CC.obtainBuilder(Components.COMPONENT_APP_MAIN)
+                    .setActionName(Components.COMPONENT_APP_JUMP)
+                    .addParam("token",result.getUserToken())
+                    .build();
+        } else {
+            cc = CC.obtainBuilder(Components.COMPONENT_APP_MAIN)
+                    .setActionName(Components.COMPONENT_APP_JUMPN)
+                    .addParam("token",result.getUserToken())
+                    .build();
+        }
+
         cc.call();
         finish();
     }

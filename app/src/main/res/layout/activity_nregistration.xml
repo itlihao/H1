@@ -1,0 +1,315 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v4.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/drawer_layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/color_main_back"
+    tools:context=".RegistrationActivity">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_margin="20dp"
+        android:background="@drawable/main_shape"
+        android:orientation="horizontal">
+
+        <LinearLayout
+            android:layout_width="480dp"
+            android:layout_height="match_parent"
+            android:background="@drawable/main_shape_layout"
+            android:elevation="5dp"
+            android:orientation="vertical"
+            tools:ignore="UselessParent">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="90dp"
+                android:background="@color/color_EE">
+
+                <ImageView
+                    android:id="@+id/iv_menu"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_marginStart="40dp"
+                    android:src="@drawable/ic_menu"
+                    tools:ignore="ContentDescription" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:text="@string/sr_choose_doctor"
+                    android:textColor="@color/color_1A"
+                    android:textSize="40sp" />
+            </RelativeLayout>
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/rv_doctor_item"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                tools:ignore="RtlSymmetry" />
+
+        </LinearLayout>
+
+        <RelativeLayout
+            android:layout_width="846dp"
+            android:layout_height="match_parent">
+
+            <LinearLayout
+                android:layout_width="846dp"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="90dp"
+                    android:background="@color/color_F5"
+                    tools:ignore="UselessParent">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerInParent="true"
+                        android:text="@string/sr_patient_info"
+                        android:textColor="@color/color_1A"
+                        android:textSize="40sp" />
+                </RelativeLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="70dp"
+                    android:layout_marginTop="40dp"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="210dp"
+                        android:layout_height="match_parent"
+                        android:gravity="center_vertical|end"
+                        android:text="@string/sr_patient_name"
+                        android:textColor="@color/color_66"
+                        android:textSize="26sp" />
+
+                    <EditText
+                        android:id="@+id/et_patient_name"
+                        android:layout_width="500dp"
+                        android:layout_height="match_parent"
+                        android:layout_marginStart="20dp"
+                        android:background="@drawable/shape_input"
+                        android:hint="@string/user_hint_patient"
+                        android:paddingStart="20dp"
+                        android:singleLine="true"
+                        android:text=""
+                        android:textColor="@color/color_1A"
+                        android:textColorHint="@color/color_B5"
+                        android:textSize="26sp"
+                        tools:ignore="RtlSymmetry,TextFields" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="70dp"
+                    android:layout_marginTop="20dp"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="210dp"
+                        android:layout_height="match_parent"
+                        android:gravity="center_vertical|end"
+                        android:text="@string/sr_patient_sex"
+                        android:textColor="@color/color_66"
+                        android:textSize="26sp" />
+
+                    <RadioGroup
+                        android:id="@+id/new_rgroup"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:layout_marginStart="30dp"
+                        android:orientation="horizontal">
+
+                        <RadioButton
+                            android:id="@+id/new_rgboy"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:text="@string/sr_sex_man"
+                            android:textColor="@color/color_66"
+                            android:textSize="26sp" />
+
+                        <RadioButton
+                            android:id="@+id/new_rggirl"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:layout_marginStart="78dp"
+                            android:text="@string/sr_sex_women"
+                            android:textColor="@color/color_66"
+                            android:textSize="26sp" />
+                    </RadioGroup>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="70dp"
+                    android:layout_marginTop="20dp"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="210dp"
+                        android:layout_height="match_parent"
+                        android:gravity="center_vertical|end"
+                        android:text="@string/sr_patient_brithday"
+                        android:textColor="@color/color_66"
+                        android:textSize="26sp" />
+
+                    <EditText
+                        android:id="@+id/et_year"
+                        android:layout_width="120dp"
+                        android:layout_height="match_parent"
+                        android:layout_marginStart="20dp"
+                        android:background="@drawable/shape_input"
+                        android:gravity="center"
+                        android:inputType="number"
+                        android:maxLength="4"
+                        android:singleLine="true"
+                        android:text=""
+                        android:textColor="@color/color_1A"
+                        android:textSize="26sp"
+                        tools:ignore="LabelFor" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="10dp"
+                        android:text="@string/sr_year"
+                        android:textColor="@color/color_B5"
+                        android:textSize="26sp" />
+
+                    <EditText
+                        android:id="@+id/et_month"
+                        android:layout_width="120dp"
+                        android:layout_height="match_parent"
+                        android:layout_marginStart="14dp"
+                        android:background="@drawable/shape_input"
+                        android:gravity="center"
+                        android:inputType="number"
+                        android:maxLength="2"
+                        android:singleLine="true"
+                        android:text=""
+                        android:textColor="@color/color_1A"
+                        android:textSize="26sp"
+                        tools:ignore="LabelFor" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="10dp"
+                        android:text="@string/sr_month"
+                        android:textColor="@color/color_B5"
+                        android:textSize="26sp" />
+
+                    <EditText
+                        android:id="@+id/et_day"
+                        android:layout_width="120dp"
+                        android:layout_height="match_parent"
+                        android:layout_marginStart="14dp"
+                        android:background="@drawable/shape_input"
+                        android:gravity="center"
+                        android:inputType="number"
+                        android:maxLength="2"
+                        android:singleLine="true"
+                        android:text=""
+                        android:textColor="@color/color_1A"
+                        android:textSize="26sp"
+                        tools:ignore="LabelFor" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="10dp"
+                        android:text="@string/sr_day"
+                        android:textColor="@color/color_B5"
+                        android:textSize="26sp" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="70dp"
+                    android:layout_marginTop="20dp"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="210dp"
+                        android:layout_height="match_parent"
+                        android:gravity="center_vertical|end"
+                        android:text="@string/sr_patient_phone"
+                        android:textColor="@color/color_66"
+                        android:textSize="26sp" />
+
+                    <EditText
+                        android:id="@+id/et_patient_phone"
+                        android:layout_width="500dp"
+                        android:layout_height="match_parent"
+                        android:layout_marginStart="20dp"
+                        android:background="@drawable/shape_input"
+                        android:hint="@string/user_hint_name"
+                        android:inputType="phone"
+                        android:maxLength="11"
+                        android:paddingStart="20dp"
+                        android:singleLine="true"
+                        android:text=""
+                        android:textColor="@color/color_1A"
+                        android:textColorHint="@color/color_B5"
+                        android:textSize="26sp"
+                        tools:ignore="RtlSymmetry,TextFields" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="80dp"
+                    android:gravity="center_horizontal"
+                    android:orientation="horizontal">
+
+                    <Button
+                        android:layout_width="240dp"
+                        android:layout_height="68dp"
+                        android:background="@drawable/main_shape_btnl"
+                        android:text="@string/sr_btn_cancel"
+                        android:textColor="@color/color_66"
+                        android:textSize="34sp"
+                        tools:ignore="ButtonStyle" />
+
+                    <Button
+                        android:layout_width="240dp"
+                        android:layout_height="68dp"
+                        android:layout_marginStart="60dp"
+                        android:background="@drawable/main_shape_btn"
+                        android:text="@string/sr_btn_confirm"
+                        android:textColor="@color/color_white"
+                        android:textSize="34sp"
+                        tools:ignore="ButtonStyle" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <registration.zhiyihealth.com.lib_ime.view.SoftKeyContainer
+                android:id="@+id/skContainer"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentBottom="true">
+            </registration.zhiyihealth.com.lib_ime.view.SoftKeyContainer>
+        </RelativeLayout>
+
+
+    </LinearLayout>
+
+
+    <FrameLayout
+        android:id="@+id/dw_fragment"
+        android:layout_width="440dp"
+        android:layout_height="match_parent"
+        android:layout_gravity="start"
+        android:background="@color/color_white"
+        android:orientation="vertical" />
+</android.support.v4.widget.DrawerLayout>

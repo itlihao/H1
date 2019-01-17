@@ -24,6 +24,7 @@ import java.util.Calendar;
 import java.util.Map;
 
 import cn.jpush.android.api.JPushInterface;
+import registration.zhiyihealth.com.lib_ime.manager.PinYinManager;
 
 import static android.support.test.internal.runner.junit4.statement.UiThreadStatement.runOnUiThread;
 
@@ -33,6 +34,7 @@ import static android.support.test.internal.runner.junit4.statement.UiThreadStat
  * Email heaolihao@163.com
  */
 public class MyApplication extends BaseApplication {
+    private PinYinManager manager;
     @Override
     public void onCreate() {
         super.onCreate();
@@ -55,12 +57,18 @@ public class MyApplication extends BaseApplication {
                 .trackAllFragments()
                 .setChannel("XXX应用商店"));
 */
-        new Thread(new Runnable() {
+
+        if (manager == null) {
+            manager = PinYinManager.getInstance();
+        }
+
+        manager.initialize(this);
+        /*new Thread(new Runnable() {
             @Override
             public void run() {
                 getNetTime();
             }
-        }).start();
+        }).start();*/
     }
 
     @SuppressLint("SimpleDateFormat")

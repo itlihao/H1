@@ -1,12 +1,12 @@
 package com.zhiyihealth.registration;
 
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
 import com.billy.cc.core.component.CC;
 import com.billy.cc.core.component.IComponentCallback;
 import com.zhiyihealth.registration.lib_base.base.BaseActivity;
 import com.zhiyihealth.registration.lib_base.constants.Components;
+import com.zhiyihealth.registration.lib_base.utils.LogUtils;
 import com.zhiyihealth.registration.lib_base.utils.ToastUtils;
 
 /**
@@ -35,7 +35,7 @@ public class MainActivity extends BaseActivity {
 
     IComponentCallback mStartCallback = (cc, result) -> {
         if (result.isSuccess()) {
-//            ToastUtils.showToast(MainActivity.this, "跳转成功");
+            LogUtils.w("MainActivity", "跳转成功");
         } else {
             ToastUtils.showToast(MainActivity.this, "**组件初始化失败");
         }

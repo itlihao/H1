@@ -25,7 +25,7 @@ allprojects {
 
 ext {
     compileVersion = 27
-    minVersion = 18
+    minVersion = 19
     targetVersion = 22
     supportVersion = '27.1.0'
 

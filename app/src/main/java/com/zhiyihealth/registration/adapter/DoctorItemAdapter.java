@@ -32,12 +32,19 @@ public class DoctorItemAdapter extends BaseQuickAdapter<DoctorInfoCheck, BaseVie
     public DoctorItemAdapter(Context context, int layoutResId, ArrayList<DoctorInfoCheck> data) {
         super(layoutResId, data);
         mContext = context;
+        if (data.size() == 1) {
+            data.get(0).setCheck(true);
+        }
     }
 
     @Override
     protected void convert(BaseViewHolder helper, DoctorInfoCheck item) {
         helper.setVisible(R.id.iv_label, false);
         helper.setText(R.id.tv_doctor_sex, "1".equals(item.getSex()) ? "男" : "女");
+
+        helper.setTextColor(R.id.tv_doctor_name, ContextCompat.getColor(mContext, R.color.color_33));
+        helper.setTextColor(R.id.tv_doctor_sex, ContextCompat.getColor(mContext, R.color.color_7B));
+        helper.setTextColor(R.id.tv_list_num, ContextCompat.getColor(mContext, R.color.color_66));
 
         if (item.isFulled()) {
             helper.setTextColor(R.id.tv_doctor_name, ContextCompat.getColor(mContext, R.color.color_C5));

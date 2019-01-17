@@ -43,7 +43,7 @@ public class RegistrationActivity extends BaseActivity implements View.OnClickLi
 
     private ArrayList<DoctorInfoCheck> mDoctorList;
 
-    private int NUM = 1;
+    private int NUM = 6;
 
     private int resId;
 
@@ -87,7 +87,7 @@ public class RegistrationActivity extends BaseActivity implements View.OnClickLi
             DoctorInfoCheck info = new DoctorInfoCheck();
             info.setRealName("张三" + i);
             info.setSex(i % 2 == 0 ? "1" : "2");
-            if (i == 1) {
+            if (i == 4) {
                 info.setFulled(true);
             }
             mDoctorList.add(info);

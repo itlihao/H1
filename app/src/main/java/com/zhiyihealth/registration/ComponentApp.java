@@ -29,6 +29,9 @@ public class ComponentApp implements IComponent {
             case Components.COMPONENT_APP_JUMP:
                 toMain(cc);
                 break;
+            case Components.COMPONENT_APP_JUMPN:
+                toNRegistration(cc);
+                break;
             default:
                 break;
         }
@@ -39,6 +42,17 @@ public class ComponentApp implements IComponent {
         String token = cc.getParamItem("token");
         Context context = cc.getContext();
         Intent intent = new Intent(context, RegistrationActivity.class);
+        if (!(context instanceof Activity)) {
+            //调用方没有设置context或app间组件跳转，context为application
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        }
+        context.startActivity(intent);
+        CC.sendCCResult(cc.getCallId(), CCResult.success());
+    }
+
+    private void toNRegistration(CC cc) {
+        Context context = cc.getContext();
+        Intent intent = new Intent(context, NRegistrationActivity.class);
         if (!(context instanceof Activity)) {
             //调用方没有设置context或app间组件跳转，context为application
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);

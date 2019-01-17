@@ -14,7 +14,11 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.billy.cc.core.component.CC;
+import com.billy.cc.core.component.IComponentCallback;
+import com.zhiyihealth.registration.lib_base.constants.Components;
 import com.zhiyihealth.registration.lib_base.data.CacheDataSource;
+import com.zhiyihealth.registration.lib_base.data.SPDataSource;
 import com.zhiyihealth.registration.lib_base.entity.DoctorInfo;
 import com.zhiyihealth.registration.lib_base.entity.EmnuLeft;
 import com.zhiyihealth.registration.lib_base.view.MDDialog;
@@ -26,8 +30,9 @@ import com.zhiyihealth.registration.lib_user.bean.MenuItem;
 import java.util.ArrayList;
 import java.util.Objects;
 
+import static com.zhiyihealth.registration.lib_user.adapter.DrawAdapter.MODEL_QUICK;
+
 /**
- *
  * @author Lihao
  * @date 2019-1-10
  * Email heaolihao@163.com
@@ -36,6 +41,7 @@ public class FragmentMenu extends Fragment {
 
     @SuppressLint("StaticFieldLeak")
     private static MDDialog mDialog;
+    private boolean mIsChecked;
 
     @Nullable
     @Override
@@ -85,10 +91,37 @@ public class FragmentMenu extends Fragment {
                 }
             }
         });
+        drawAdapter.setCheckedChangedListener(new DrawAdapter.OnCheckedChangedListener() {
+            @Override
+            public void onCheckedChanged(View view, boolean isChecked) {
+                mIsChecked = isChecked;
+                if (isChecked) {
+                    // 跳转到快速挂号页面
+                    CC.obtainBuilder(Components.COMPONENT_APP_MAIN)
+                            .setActionName(Components.COMPONENT_APP_JUMP)
+                            .build()
+                            .callAsyncCallbackOnMainThread(mStartCallback);
+                } else {
+                    // 跳转到挂号页面
+                    CC.obtainBuilder(Components.COMPONENT_APP_MAIN)
+                            .setActionName(Components.COMPONENT_APP_JUMPN)
+                            .build()
+                            .callAsyncCallbackOnMainThread(mStartCallback);
+
+                }
+            }
+        });
         LinearLayoutManager gridLayoutManager1 = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
         mMenuView.setLayoutManager(gridLayoutManager1);
         mMenuView.setAdapter(drawAdapter);
     }
+
+    IComponentCallback mStartCallback = (cc, result) -> {
+        if (result.isSuccess()) {
+            SPDataSource.put(Objects.requireNonNull(getActivity()), MODEL_QUICK, mIsChecked);
+            getActivity().finish();
+        }
+    };
 
     private void quitAcount() {
         mDialog = new MDDialog.Builder(getContext())
