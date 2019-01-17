@@ -1,6 +1,7 @@
 package com.zhiyihealth.registration;
 
 import android.annotation.SuppressLint;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.billy.cc.core.component.CC;
@@ -8,6 +9,7 @@ import com.billy.cc.core.component.CCResult;
 import com.billy.cc.core.component.IComponentCallback;
 import com.growingio.android.sdk.collection.Configuration;
 import com.growingio.android.sdk.collection.GrowingIO;
+import com.hospital.s1m.lib_print.utils.AidlUtil;
 import com.tencent.bugly.Bugly;
 import com.tencent.bugly.beta.Beta;
 import com.zhiyihealth.registration.lib_base.BaseApplication;
@@ -57,18 +59,14 @@ public class MyApplication extends BaseApplication {
                 .trackAllFragments()
                 .setChannel("XXX应用商店"));
 */
+        Log.d("application","User模块需要在Application中注册的内容");
+        AidlUtil.getInstance().connectPrinterService(this);
 
         if (manager == null) {
             manager = PinYinManager.getInstance();
         }
 
         manager.initialize(this);
-        /*new Thread(new Runnable() {
-            @Override
-            public void run() {
-                getNetTime();
-            }
-        }).start();*/
     }
 
     @SuppressLint("SimpleDateFormat")

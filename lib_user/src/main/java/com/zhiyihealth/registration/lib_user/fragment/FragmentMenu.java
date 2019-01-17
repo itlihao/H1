@@ -91,24 +91,21 @@ public class FragmentMenu extends Fragment {
                 }
             }
         });
-        drawAdapter.setCheckedChangedListener(new DrawAdapter.OnCheckedChangedListener() {
-            @Override
-            public void onCheckedChanged(View view, boolean isChecked) {
-                mIsChecked = isChecked;
-                if (isChecked) {
-                    // 跳转到快速挂号页面
-                    CC.obtainBuilder(Components.COMPONENT_APP_MAIN)
-                            .setActionName(Components.COMPONENT_APP_JUMP)
-                            .build()
-                            .callAsyncCallbackOnMainThread(mStartCallback);
-                } else {
-                    // 跳转到挂号页面
-                    CC.obtainBuilder(Components.COMPONENT_APP_MAIN)
-                            .setActionName(Components.COMPONENT_APP_JUMPN)
-                            .build()
-                            .callAsyncCallbackOnMainThread(mStartCallback);
+        drawAdapter.setCheckedChangedListener((view12, isChecked) -> {
+            mIsChecked = isChecked;
+            if (isChecked) {
+                // 跳转到快速挂号页面
+                CC.obtainBuilder(Components.COMPONENT_APP_MAIN)
+                        .setActionName(Components.COMPONENT_APP_JUMP)
+                        .build()
+                        .callAsyncCallbackOnMainThread(mStartCallback);
+            } else {
+                // 跳转到挂号页面
+                CC.obtainBuilder(Components.COMPONENT_APP_MAIN)
+                        .setActionName(Components.COMPONENT_APP_JUMPN)
+                        .build()
+                        .callAsyncCallbackOnMainThread(mStartCallback);
 
-                }
             }
         });
         LinearLayoutManager gridLayoutManager1 = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);

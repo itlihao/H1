@@ -15,6 +15,7 @@ import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
@@ -26,26 +27,27 @@ import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.zhiyihealth.registration.adapter.DoctorListAdapter;
 import com.zhiyihealth.registration.lib_base.base.BaseActivity;
 import com.zhiyihealth.registration.lib_base.constants.Components;
+import com.zhiyihealth.registration.lib_base.constants.Formatter;
 import com.zhiyihealth.registration.lib_base.entity.DoctorInfoCheck;
 import com.zhiyihealth.registration.lib_base.entity.LinearItemDecoration;
+import com.zhiyihealth.registration.lib_base.utils.ToastUtils;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.Objects;
 
 import registration.zhiyihealth.com.lib_ime.listener.PinYinConnector;
 import registration.zhiyihealth.com.lib_ime.listener.SoftKeyListener;
 import registration.zhiyihealth.com.lib_ime.manager.PinYinManager;
 import registration.zhiyihealth.com.lib_ime.view.SoftKeyContainer;
 
-import static registration.zhiyihealth.com.lib_ime.view.SoftKeyContainer.KEYCODE_CLOSE;
-import static registration.zhiyihealth.com.lib_ime.view.SoftKeyContainer.KEYCODE_PUN;
 import static registration.zhiyihealth.com.lib_ime.view.SoftKeyContainer.KEYCODE_SWITCH;
 
 /**
  * @author Lihao
  */
 public class NRegistrationActivity extends BaseActivity implements View.OnClickListener, PinYinConnector {
-    private ImageView mIvMenu;
     private FrameLayout mDwMenu;
     private DrawerLayout mDrawerLayout;
 
@@ -55,12 +57,12 @@ public class NRegistrationActivity extends BaseActivity implements View.OnClickL
     private EditText mEtDay;
     private EditText mEtPhone;
 
-    private DoctorListAdapter doctorAdapter;
+    private Button mRegistration;
+
     private RecyclerView doctorView;
 
     private ArrayList<DoctorInfoCheck> mDoctorList;
 
-    private SoftKeyNotifier softKeyNotifier;
     private SoftKeyContainer softKeyContainer;
 
     private PinYinManager manager;
@@ -104,7 +106,7 @@ public class NRegistrationActivity extends BaseActivity implements View.OnClickL
 
     @SuppressLint("ClickableViewAccessibility")
     private void initView() {
-        mIvMenu = findViewById(R.id.iv_menu);
+        ImageView mIvMenu = findViewById(R.id.iv_menu);
         mDrawerLayout = findViewById(R.id.drawer_layout);
         mDwMenu = findViewById(R.id.dw_fragment);
         doctorView = findViewById(R.id.rv_doctor_item);
@@ -115,8 +117,11 @@ public class NRegistrationActivity extends BaseActivity implements View.OnClickL
         mEtDay = findViewById(R.id.et_day);
         mEtPhone = findViewById(R.id.et_patient_phone);
 
+        mRegistration = findViewById(R.id.btn_registration);
+        mRegistration.setOnClickListener(this);
+
         softKeyContainer = findViewById(R.id.skContainer);
-        softKeyNotifier = new SoftKeyNotifier();
+        SoftKeyNotifier softKeyNotifier = new SoftKeyNotifier();
         softKeyContainer.initialize(this, softKeyNotifier);
         mEtName.setOnTouchListener((v, event) -> {
             if (event.getAction() == MotionEvent.ACTION_UP) {
@@ -194,17 +199,14 @@ public class NRegistrationActivity extends BaseActivity implements View.OnClickL
 
     private void initAdapter() {
         int resId = R.layout.item_doctor;
-        doctorAdapter = new DoctorListAdapter(this, resId, mDoctorList);
-        doctorAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
-            @Override
-            public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
-                DoctorInfoCheck infoCheck = (DoctorInfoCheck) adapter.getItem(position);
-                assert infoCheck != null;
-                if (infoCheck.isFulled()) {
-                    return;
-                }
-                setCheck(adapter, position);
+        DoctorListAdapter doctorAdapter = new DoctorListAdapter(this, resId, mDoctorList);
+        doctorAdapter.setOnItemClickListener((adapter, view, position) -> {
+            DoctorInfoCheck infoCheck = (DoctorInfoCheck) adapter.getItem(position);
+            assert infoCheck != null;
+            if (infoCheck.isFulled()) {
+                return;
             }
+            setCheck(adapter, position);
         });
         doctorView.setAdapter(doctorAdapter);
     }
@@ -269,9 +271,9 @@ public class NRegistrationActivity extends BaseActivity implements View.OnClickL
             int preCheck = adapter1.getPreCheck();
             if (preCheck >= 0) {
                 DoctorInfoCheck item1 = adapter1.getItem(preCheck);
-                item1.setCheck(false);
+                Objects.requireNonNull(item1).setCheck(false);
             }
-            item.setCheck(true);
+            Objects.requireNonNull(item).setCheck(true);
             adapter1.setPreCheck(position);
             adapter.notifyDataSetChanged();
         }
@@ -288,6 +290,21 @@ public class NRegistrationActivity extends BaseActivity implements View.OnClickL
                         .setActionName(Components.COMPONENT_USER_MENU)
                         .build()
                         .callAsyncCallbackOnMainThread(fragmentdrawer);
+                break;
+            case R.id.btn_registration:
+                CC.obtainBuilder(Components.ComponentPrint)
+                        .setActionName(Components.ComponentPrintNumber)
+                        .addParam("number", "12")
+                        .addParam("patientName", "杨亚坤")
+                        .addParam("doctorName", "李时珍")
+                        .addParam("registerDate", Formatter.DATE_FORMAT4.format(new Date()))
+                        .addParam("needWait", 5)
+                        .build()
+                        .callAsyncCallbackOnMainThread((cc, result) -> {
+                            if (result.isSuccess()) {
+                                ToastUtils.showToast(NRegistrationActivity.this, "打印完毕");
+                            }
+                        });
                 break;
             default:
                 break;

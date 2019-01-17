@@ -33,6 +33,8 @@
     <string name="sr_month">月</string>
     <string name="sr_day">日</string>
 
+    <string name="sr_menu_quit">退出账号</string>
+
     <string name="sr_btn_confirm">确认挂号</string>
     <string name="sr_btn_cancel">取消挂号</string>
 

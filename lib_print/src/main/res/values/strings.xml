@@ -1,0 +1,5 @@
+<resources>
+    <string name="print_name">lib_patient</string>
+    <string name="print_toast_2">The service has been disconnected!</string>
+    <string name="print_qr">&#8194;&#8194;&#8194;&#8194;二维码</string>
+</resources>

@@ -22,6 +22,7 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Paint.FontMetricsInt;
 import android.graphics.drawable.Drawable;
+import android.support.v4.content.ContextCompat;
 import android.util.AttributeSet;
 import android.view.KeyEvent;
 import android.view.View;
@@ -77,12 +78,12 @@ public class NewComposingView extends View {
         super(context, attrs);
 
         Resources r = context.getResources();
-        mHlDrawable = r.getDrawable(R.drawable.composing_hl_bg);
-        mCursor = r.getDrawable(R.drawable.composing_area_cursor);
+        mHlDrawable = ContextCompat.getDrawable(context, R.drawable.composing_hl_bg);
+        mCursor = ContextCompat.getDrawable(context, R.drawable.composing_area_cursor);
 
-        mStrColor = r.getColor(R.color.composing_color);
-        mStrColorHl = r.getColor(R.color.composing_color_hl);
-        mStrColorIdle = r.getColor(R.color.composing_color_idle);
+        mStrColor = ContextCompat.getColor(context, R.color.composing_color);
+        mStrColorHl = ContextCompat.getColor(context, R.color.composing_color_hl);
+        mStrColorIdle = ContextCompat.getColor(context, R.color.composing_color_idle);
 
         mFontSize = r.getDimensionPixelSize(R.dimen.composing_height);
 

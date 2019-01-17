@@ -1,0 +1,5 @@
+<resources>
+    <string name="print_name">打印助手</string>
+    <string name="print_toast_2">服务已断开!</string>
+    <string name="print_qr">&#8194;&#8194;&#8194;&#8194;二维码</string>
+</resources>

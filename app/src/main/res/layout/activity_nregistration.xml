@@ -281,6 +281,7 @@
                         tools:ignore="ButtonStyle" />
 
                     <Button
+                        android:id="@+id/btn_registration"
                         android:layout_width="240dp"
                         android:layout_height="68dp"
                         android:layout_marginStart="60dp"

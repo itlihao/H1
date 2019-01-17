@@ -1,1 +1,1 @@
-include ':app', ':lib_user', ':lib_base', ':lib_ime'
+include ':app', ':lib_user', ':lib_base', ':lib_ime', ':lib_print'

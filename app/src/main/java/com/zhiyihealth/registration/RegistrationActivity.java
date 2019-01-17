@@ -25,21 +25,16 @@ import com.zhiyihealth.registration.lib_base.entity.DoctorInfoCheck;
 import com.zhiyihealth.registration.lib_base.view.MyGridLayoutManager;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 public class RegistrationActivity extends BaseActivity implements View.OnClickListener {
-    private ImageView mIvMenu;
-
-    private Button mBtnGet;
 
     private FrameLayout mDwMenu;
-    private Fragment mDwFragment;
     private DrawerLayout mDrawerLayout;
 
     private TextView mWelcome;
 
     private RecyclerView doctorView;
-
-    private DoctorItemAdapter doctorAdapter;
 
     private ArrayList<DoctorInfoCheck> mDoctorList;
 
@@ -63,13 +58,13 @@ public class RegistrationActivity extends BaseActivity implements View.OnClickLi
     }
 
     private void initView() {
-        mIvMenu = findViewById(R.id.iv_menu);
+        ImageView mIvMenu = findViewById(R.id.iv_menu);
         mDrawerLayout = findViewById(R.id.drawer_layout);
         mDwMenu = findViewById(R.id.dw_fragment);
         doctorView = findViewById(R.id.rv_doctor_item);
         mWelcome = findViewById(R.id.tv_welcome);
 
-        mBtnGet = findViewById(R.id.btn_getNum);
+        Button mBtnGet = findViewById(R.id.btn_getNum);
 
         mIvMenu.setOnClickListener(this);
         mBtnGet.setOnClickListener(this);
@@ -120,23 +115,20 @@ public class RegistrationActivity extends BaseActivity implements View.OnClickLi
 
     private void initAdapter() {
 
-        doctorAdapter = new DoctorItemAdapter(this, resId, mDoctorList);
-        doctorAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
-            @Override
-            public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
-                DoctorInfoCheck infoCheck = (DoctorInfoCheck) adapter.getItem(position);
-                assert infoCheck != null;
-                if (infoCheck.isFulled()) {
-                    return;
-                }
-                setCheck(adapter, position);
+        DoctorItemAdapter doctorAdapter = new DoctorItemAdapter(this, resId, mDoctorList);
+        doctorAdapter.setOnItemClickListener((adapter, view, position) -> {
+            DoctorInfoCheck infoCheck = (DoctorInfoCheck) adapter.getItem(position);
+            assert infoCheck != null;
+            if (infoCheck.isFulled()) {
+                return;
             }
+            setCheck(adapter, position);
         });
         doctorView.setAdapter(doctorAdapter);
     }
 
     private void onListener() {
-        mDrawerLayout.setDrawerListener(new DrawerLayout.DrawerListener() {
+        mDrawerLayout.addDrawerListener(new DrawerLayout.DrawerListener() {
             @Override
             public void onDrawerSlide(@NonNull View drawerView, float slideOffset) {
 
@@ -170,9 +162,9 @@ public class RegistrationActivity extends BaseActivity implements View.OnClickLi
             int preCheck = adapter1.getPreCheck();
             if (preCheck >= 0) {
                 DoctorInfoCheck item1 = adapter1.getItem(preCheck);
-                item1.setCheck(false);
+                Objects.requireNonNull(item1).setCheck(false);
             }
-            item.setCheck(true);
+            Objects.requireNonNull(item).setCheck(true);
             adapter1.setPreCheck(position);
             adapter.notifyDataSetChanged();
         }
@@ -216,7 +208,6 @@ public class RegistrationActivity extends BaseActivity implements View.OnClickLi
 
     private void showdwFragment(Fragment mDwFragment) {
         if (mDwFragment != null) {
-            this.mDwFragment = mDwFragment;
             FragmentTransaction trans = getSupportFragmentManager().beginTransaction();
             trans.replace(R.id.dw_fragment, mDwFragment);
             trans.commit();

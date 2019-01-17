@@ -72,27 +72,25 @@ public class SoftKeyContainer extends LinearLayout {
      */
     private GestureDetector mGestureDetectorCandidates;
 
-
-    /**
-     * Used to notify gestures from candidates view. 候选词的手势监听器
-     */
-    private OnGestureListener mGestureListenerCandidates;
-
     private Context mContext;
 
     private MyKeyboardView keyboardView;
-    private Keyboard k1;// 字母键盘
-    private Keyboard k2;// 数字键盘
-    private Keyboard k3;//标点符号键盘
+    // 字母键盘
+    private Keyboard k1;
+    // 数字键盘
+    private Keyboard k2;
 
     private FrameLayout frameLayout;
 
     private int keyboardType = 1;
-
-    public boolean isNum = false;// 是否数据键盘
-    public boolean ispun = false;//是否标点键盘
-    public boolean isupper = false;// 是否大写
-    public boolean isCN = true;// 是否中文
+    // 是否数据键盘
+    public boolean isNum = false;
+    //是否标点键盘
+    public boolean ispun = false;
+    // 是否大写
+    public boolean isupper = false;
+    // 是否中文
+    public boolean isCN = true;
 
     public static final int KEYCODE_PUN = -7;
     public static final int KEYCODE_SWITCH = -8;
@@ -123,7 +121,9 @@ public class SoftKeyContainer extends LinearLayout {
         keyboardView.setOnKeyboardActionListener(listener);
 
         mChoiceNotifier = new ChoiceNotifier();
-        mGestureListenerCandidates = new OnGestureListener(true);
+        /*
+         * Used to notify gestures from candidates view. 候选词的手势监听器
+         */OnGestureListener mGestureListenerCandidates = new OnGestureListener(true);
         mGestureDetectorCandidates = new GestureDetector(context, mGestureListenerCandidates);
         onCreateCandidatesView();
     }
@@ -270,7 +270,6 @@ public class SoftKeyContainer extends LinearLayout {
             for (Keyboard.Key key : keylist) {
                 if (key.label != null && isword(key.label.toString())) {
                     key.label = key.label.toString().toLowerCase();
-//                    key.codes[0] = key.codes[0] + 32;
                 }
             }
         }
@@ -279,7 +278,6 @@ public class SoftKeyContainer extends LinearLayout {
             for (Keyboard.Key key : keylist) {
                 if (key.label != null && isword(key.label.toString())) {
                     key.label = key.label.toString().toUpperCase();
-//                    key.codes[0] = key.codes[0] - 32;
                 }
             }
         }
@@ -299,7 +297,6 @@ public class SoftKeyContainer extends LinearLayout {
             for (Keyboard.Key key : keylist) {
                 if (key.label != null && isword(key.label.toString())) {
                     key.label = key.label.toString().toLowerCase();
-//                    key.codes[0] = key.codes[0] + 32;
                 }
             }
         }

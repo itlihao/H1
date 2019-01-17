@@ -15,4 +15,11 @@ public interface Components {
     String COMPONENT_APP_MAIN = "app.ComponentApp";
     String COMPONENT_APP_JUMP = "toStartMain";
     String COMPONENT_APP_JUMPN = "toStartNRegistration";
+
+    String ComponentPrint = "lib_print";
+    String ComponentPrintInit = "initPrint";
+    String ComponentPrintNumber = "PrintNumber";
+    String ComponentPrintQr = "PrintNumberQr";
+    String ComponentGetQr = "GetNumberQr";
+
 }

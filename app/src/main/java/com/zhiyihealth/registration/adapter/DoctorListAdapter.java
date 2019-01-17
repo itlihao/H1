@@ -40,14 +40,6 @@ public class DoctorListAdapter extends BaseQuickAdapter<DoctorInfoCheck, BaseVie
         helper.setVisible(R.id.iv_label, false);
         helper.setText(R.id.tv_doctor_sex, "1".equals(item.getSex()) ? "男" : "女");
 
-        /*if (item.isFulled()) {
-            helper.setTextColor(R.id.tv_doctor_name, ContextCompat.getColor(mContext, R.color.color_C5));
-            helper.setTextColor(R.id.tv_doctor_sex, ContextCompat.getColor(mContext, R.color.color_C5));
-            helper.setTextColor(R.id.tv_list_num, ContextCompat.getColor(mContext, R.color.color_C5));
-//            helper.setImageResource(R.id.item_radio, R.drawable.radio_fulled);
-            helper.setVisible(R.id.iv_label, true);
-        }*/
-
         if (item.isCheck()) {
             helper.setBackgroundRes(R.id.rl_solid, R.drawable.item_choose_shape);
             helper.setTextColor(R.id.tv_doctor_name, ContextCompat.getColor(mContext, R.color.color_white));
@@ -67,6 +59,5 @@ public class DoctorListAdapter extends BaseQuickAdapter<DoctorInfoCheck, BaseVie
         } else {
             helper.setImageResource(R.id.iv_doctor, R.drawable.ic_head_women);
         }
-//        helper.setChecked(R.id.item_radio, item.isCheck());
     }
 }

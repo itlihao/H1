@@ -22,6 +22,7 @@ import android.widget.EditText;
 
 /**
  * Class to handle English input.
+ *
  * @author Lihao
  */
 public class NewEnglishInputProcessor {
@@ -83,7 +84,9 @@ public class NewEnglishInputProcessor {
 
             if (null != insert && realAction) {
 //                inputContext.commitText(insert, insert.length());
-                editable.insert(start, insert);
+                if (editable.length() < 16) {
+                    editable.insert(start, insert);
+                }
             }
 
             return true;
@@ -103,7 +106,9 @@ public class NewEnglishInputProcessor {
 
         String result = String.valueOf((char) keyChar);
 //        inputContext.commitText(result, result.length());
-        editable.insert(start, result);
+        if (editable.length() < 16) {
+            editable.insert(start, result);
+        }
         mLastKeyCode = keyCode;
         return true;
     }
