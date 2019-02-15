@@ -60,7 +60,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="20dp"
-                android:text="5人排队中..."
                 android:textColor="@color/color_66"
                 android:textSize="26sp" />
 

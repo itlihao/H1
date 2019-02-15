@@ -166,6 +166,19 @@ public class NetDataSource {
         post(tag, url, param, listener);
     }
 
+    public static <T> void postNoHeader(Object tag, String url, HashMap<String, String> map, ResponseListener<T> listener) {
+        HttpParams httpParams = new HttpParams();
+        httpParams.put(map);
+        post(tag, url, httpParams, listener);
+    }
+
+    public static <T> void postDetail(Object tag, String url, HashMap<String, String> map, ResponseListener<T> listener) {
+        HttpParams httpParams = new HttpParams();
+        String param = JSON.toJSONString(map);
+        httpParams.put("detail", param);
+        post(tag, url, httpParams, listener);
+    }
+
     /**
      * 不需要opeCode就传0
      */
@@ -187,6 +200,17 @@ public class NetDataSource {
         url = CacheDataSource.getBaseUrl() + url;
         OkGo.<T>post(url)
                 .params("detail", httpParams)
+                .converter(new ObjectConverter<>(listener))
+                .adapt(new ObservableBody<>())
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(getObserver(tag, url, listener));
+    }
+
+    private static <T> void post(Object tag, String url, HttpParams httpParams, ResponseListener<T> listener) {
+        url = CacheDataSource.getBaseUrl() + url;
+        OkGo.<T>post(url)
+                .params(httpParams)
                 .converter(new ObjectConverter<>(listener))
                 .adapt(new ObservableBody<>())
                 .subscribeOn(Schedulers.io())

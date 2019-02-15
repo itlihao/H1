@@ -18,6 +18,8 @@ import com.android.inputmethod.pinyin.KeyMapDream;
 import com.android.inputmethod.pinyin.NewEnglishInputProcessor;
 import com.android.inputmethod.pinyin.PinyinDecoderService;
 import com.android.inputmethod.pinyin.SoftKey;
+import com.zhiyihealth.registration.lib_base.utils.LogUtils;
+import com.zhiyihealth.registration.lib_base.utils.Utils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -180,6 +182,8 @@ public class PinYinManager {
 
     public void switchUpper(boolean isUpper) {
         mInputMode.switchShift(isUpper);
+
+        resetState();
     }
     /**
      * 响应软键盘按键的处理函数
@@ -1032,6 +1036,13 @@ public class PinYinManager {
         for (PinYinConnector obj : mObServerList) {
             obj.onHiddenCompose();
         }
+    }
+
+    private void resetState() {
+        mImeState = ImeState.STATE_IDLE;
+        mDecInfo.reset();
+
+        mDecInfo.resetCandidates();
     }
 
     /**

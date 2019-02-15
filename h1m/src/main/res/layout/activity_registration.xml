@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/color_EFEFF4"
+    tools:ignore="SpUsage">
+
+    <RelativeLayout
+        android:id="@+id/rl_title"
+        android:layout_width="match_parent"
+        android:layout_height="112dp"
+        android:background="@color/colorPrimary">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:text="@string/sr_title"
+            android:textColor="@color/white"
+            android:textSize="40sp" />
+    </RelativeLayout>
+
+    <TextView
+        android:id="@+id/tv_choose"
+        android:layout_below="@id/rl_title"
+        android:layout_width="match_parent"
+        android:layout_height="80dp"
+        android:background="@color/color_EFEFF4"
+        android:gravity="center_vertical"
+        android:paddingStart="30dp"
+        android:text="选择医生"
+        android:textSize="30sp" />
+
+    <android.support.v7.widget.RecyclerView
+        android:layout_below="@id/tv_choose"
+        android:id="@+id/rv_doctor_list"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@+id/select_doctor" />
+
+    <Button
+        android:id="@+id/select_doctor"
+        android:layout_width="match_parent"
+        android:layout_height="94dp"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:background="@color/colorPrimary"
+        android:gravity="center"
+        android:text="挂号"
+        android:textColor="@color/white"
+        android:textSize="32sp" />
+</RelativeLayout>

@@ -40,8 +40,8 @@ public class ObjectConverter<T> implements Converter<T> {
         }
         HttpResult mHttpResult = JSON.parseObject(body.string(), HttpResult.class);
         String code = (String) mHttpResult.getBody().getCode();
-        if (!code.equals("2000000")) {
-            if (code.equals("2010109")) {
+        if (!"2000000".equals(code)) {
+            if ("2010109".equals(code)) {
                 Observable.empty().observeOn(AndroidSchedulers.mainThread())
                         .doOnComplete(new Action() {
                             @Override

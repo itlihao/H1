@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">lib_base</string>
+    <string name="app_name">快速挂号</string>
 
     <string name="user_hint_name">请输入手机号</string>
     <string name="user_hint_pwd">请输入密码</string>

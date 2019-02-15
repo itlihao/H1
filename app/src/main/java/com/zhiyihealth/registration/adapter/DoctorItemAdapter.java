@@ -50,14 +50,18 @@ public class DoctorItemAdapter extends BaseQuickAdapter<DoctorInfoCheck, BaseVie
             helper.setTextColor(R.id.tv_doctor_name, ContextCompat.getColor(mContext, R.color.color_C5));
             helper.setTextColor(R.id.tv_doctor_sex, ContextCompat.getColor(mContext, R.color.color_C5));
             helper.setTextColor(R.id.tv_list_num, ContextCompat.getColor(mContext, R.color.color_C5));
-//            helper.setImageResource(R.id.item_radio, R.drawable.radio_fulled);
+            helper.setImageResource(R.id.item_radio, R.drawable.radio_fulled);
             helper.setVisible(R.id.iv_label, true);
         }
 
         if (item.isCheck()) {
             helper.setBackgroundRes(R.id.rl_solid, R.drawable.card_choose_shape);
+            helper.setImageResource(R.id.item_radio, R.drawable.radio_checked);
         } else {
             helper.setBackgroundRes(R.id.rl_solid, R.drawable.card_unchoose_shape);
+            if (!item.isFulled()) {
+                helper.setImageResource(R.id.item_radio, R.drawable.radio_unchecked);
+            }
         }
 
         helper.setText(R.id.tv_doctor_name, item.getRealName());
@@ -67,6 +71,8 @@ public class DoctorItemAdapter extends BaseQuickAdapter<DoctorInfoCheck, BaseVie
         } else {
             helper.setImageResource(R.id.iv_doctor, R.drawable.ic_head_women);
         }
-        helper.setChecked(R.id.item_radio, item.isCheck());
+//        helper.setChecked(R.id.item_radio, item.isCheck());
+
+        helper.setText(R.id.tv_list_num, item.getWaitNum() + "人排队中...");
     }
 }

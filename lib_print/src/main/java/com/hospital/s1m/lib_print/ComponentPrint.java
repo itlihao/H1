@@ -9,7 +9,7 @@ import com.hospital.s1m.lib_print.utils.AidlUtil;
 import com.hospital.s1m.lib_print.utils.QRCodeUtil;
 import com.zhiyihealth.registration.lib_base.constants.Components;
 
-public class ComponentPatient implements IComponent {
+public class ComponentPrint implements IComponent {
     @Override
     public String getName() {
         return Components.ComponentPrint;
@@ -24,13 +24,20 @@ public class ComponentPatient implements IComponent {
                 break;*/
             case Components.ComponentPrintNumber:
                 String number = cc.getParamItem("number");
-                String patientName = cc.getParamItem("patientName");
                 String doctorName = cc.getParamItem("doctorName");
-                String registerDate = cc.getParamItem("registerDate");
-                int needWait = cc.getParamItem("needWait");
+                String registrationId = cc.getParamItem("registrationId");
+                String sysUserId = cc.getParamItem("sysUserId");
+                int periodType = cc.getParamItem("periodType");
+                String period = "上午";
+                if (periodType == 2) {
+                    period = "下午";
+                } else if (periodType == 3) {
+                    period = "晚上";
+                }
                 try {
                     //居中
-                    AidlUtil.getInstance().printNumber(number, patientName, doctorName, registerDate,needWait);
+                    AidlUtil.getInstance().printNumber(cc.getContext(), number, doctorName, registrationId, sysUserId, period);
+//                    AidlUtil.getInstance().printBitmaps(AidlUtil.createImage(cc.getContext(),"https://www.baidu.com/", "请您在候诊期间", "扫描二维码填写个人信息"));
                     CC.sendCCResult(cc.getCallId(), CCResult.success());
                 } catch (Exception e) {
                     CC.sendCCResult(cc.getCallId(), CCResult.error("打印失败"));

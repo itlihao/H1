@@ -20,36 +20,57 @@ import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.zhiyihealth.registration.adapter.DoctorItemAdapter;
 import com.zhiyihealth.registration.lib_base.base.BaseActivity;
 import com.zhiyihealth.registration.lib_base.constants.Components;
+import com.zhiyihealth.registration.lib_base.constants.Formatter;
+import com.zhiyihealth.registration.lib_base.contract.MainContract;
 import com.zhiyihealth.registration.lib_base.data.CacheDataSource;
+import com.zhiyihealth.registration.lib_base.entity.DoctorInfo;
 import com.zhiyihealth.registration.lib_base.entity.DoctorInfoCheck;
+import com.zhiyihealth.registration.lib_base.entity.QuickRegistr;
+import com.zhiyihealth.registration.lib_base.model.RegistrationModel;
+import com.zhiyihealth.registration.lib_base.presenter.RegistrationPresenter;
+import com.zhiyihealth.registration.lib_base.utils.ToastUtils;
 import com.zhiyihealth.registration.lib_base.view.MyGridLayoutManager;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Objects;
 
-public class RegistrationActivity extends BaseActivity implements View.OnClickListener {
+/**
+ * @author Lihao
+ */
+public class RegistrationActivity extends BaseActivity implements View.OnClickListener, MainContract.RegistrationView {
 
     private FrameLayout mDwMenu;
     private DrawerLayout mDrawerLayout;
-
-    private TextView mWelcome;
 
     private RecyclerView doctorView;
 
     private ArrayList<DoctorInfoCheck> mDoctorList;
 
-    private int NUM = 6;
-
     private int resId;
+
+    private RegistrationPresenter mPresenter;
+
+    private String sysUserId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         initView();
-        onListener();
+
+        mPresenter = new RegistrationPresenter(RegistrationActivity.this, new RegistrationModel(), this);
         initData();
         initAdapter();
+        onListener();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (mPresenter != null) {
+            mPresenter.getDoctorInfo(CacheDataSource.getClinicId());
+        }
     }
 
     @Override
@@ -57,37 +78,35 @@ public class RegistrationActivity extends BaseActivity implements View.OnClickLi
         return R.layout.activity_registration;
     }
 
+    @SuppressLint("SetTextI18n")
     private void initView() {
         ImageView mIvMenu = findViewById(R.id.iv_menu);
         mDrawerLayout = findViewById(R.id.drawer_layout);
         mDwMenu = findViewById(R.id.dw_fragment);
         doctorView = findViewById(R.id.rv_doctor_item);
-        mWelcome = findViewById(R.id.tv_welcome);
+        TextView mWelcome = findViewById(R.id.tv_welcome);
 
         Button mBtnGet = findViewById(R.id.btn_getNum);
 
         mIvMenu.setOnClickListener(this);
         mBtnGet.setOnClickListener(this);
-    }
 
-    @SuppressLint("SetTextI18n")
-    private void initData() {
         if (CacheDataSource.getClinicName().length() > 12) {
             mWelcome.setText(CacheDataSource.getClinicName().substring(0, 12) + "..." + getString(R.string.sr_message));
         } else {
             mWelcome.setText(CacheDataSource.getClinicName() + getString(R.string.sr_message));
         }
         mDoctorList = new ArrayList<>();
-        for (int i = 0; i < NUM; i++) {
-            DoctorInfoCheck info = new DoctorInfoCheck();
-            info.setRealName("张三" + i);
-            info.setSex(i % 2 == 0 ? "1" : "2");
-            if (i == 4) {
-                info.setFulled(true);
-            }
-            mDoctorList.add(info);
-        }
+    }
 
+
+    private void initData() {
+        mDoctorList = DoctorInfoCheck.transformationNoCheck(CacheDataSource.getClinicDoctorInfo());
+        /*for (DoctorInfo doctorInfo : doctorlist) {
+            String initial = getLetter(doctorInfo.getRealName());
+            doctorInfo.setInitial(initial);
+        }
+        sort(doctorlist);*/
         if (mDoctorList.size() <= 2) {
             resId = R.layout.item_doctor_high_wide;
         } else if (mDoctorList.size() == 3) {
@@ -114,17 +133,17 @@ public class RegistrationActivity extends BaseActivity implements View.OnClickLi
     }
 
     private void initAdapter() {
-
         DoctorItemAdapter doctorAdapter = new DoctorItemAdapter(this, resId, mDoctorList);
+        doctorView.setAdapter(doctorAdapter);
         doctorAdapter.setOnItemClickListener((adapter, view, position) -> {
             DoctorInfoCheck infoCheck = (DoctorInfoCheck) adapter.getItem(position);
             assert infoCheck != null;
+            sysUserId = infoCheck.getDoctorId();
             if (infoCheck.isFulled()) {
                 return;
             }
             setCheck(adapter, position);
         });
-        doctorView.setAdapter(doctorAdapter);
     }
 
     private void onListener() {
@@ -183,13 +202,7 @@ public class RegistrationActivity extends BaseActivity implements View.OnClickLi
                 break;
 
             case R.id.btn_getNum:
-                NUM++;
-                if (NUM > 6) {
-                    NUM = 1;
-                }
-                mDoctorList.clear();
-                initData();
-                initAdapter();
+                mPresenter.quickRegistration(CacheDataSource.getClinicId(), sysUserId);
                 break;
 
             default:
@@ -212,5 +225,34 @@ public class RegistrationActivity extends BaseActivity implements View.OnClickLi
             trans.replace(R.id.dw_fragment, mDwFragment);
             trans.commit();
         }
+    }
+
+    @Override
+    public void onQuickRegistration(QuickRegistr quickRegistr) {
+        showLoading("挂号成功，正在为您打印挂号单");
+        mPresenter.getDoctorInfo(CacheDataSource.getClinicId());
+        sysUserId = "";
+        CC.obtainBuilder(Components.ComponentPrint)
+                .setActionName(Components.ComponentPrintNumber)
+                .addParam("number", quickRegistr.getRegistrationNo())
+                .addParam("doctorName", quickRegistr.getDoctorName())
+                .addParam("registerDate", Formatter.DATE_FORMAT4.format(new Date()))
+                .addParam("registrationId", quickRegistr.getRegistrationId())
+                .addParam("sysUserId", quickRegistr.getSysUserId())
+                .addParam("periodType", quickRegistr.getPeriodType())
+                .build()
+                .callAsyncCallbackOnMainThread((cc, result) -> {
+                    if (result.isSuccess()) {
+                        ToastUtils.showToast(RegistrationActivity.this, "打印完毕");
+                        hideLoading();
+                    }
+                });
+    }
+
+    @Override
+    public void onDoctorResult(ArrayList<DoctorInfo> result) {
+        mDoctorList.clear();
+        initData();
+        initAdapter();
     }
 }

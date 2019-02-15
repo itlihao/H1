@@ -1,11 +1,13 @@
 package com.zhiyihealth.registration;
 
 import android.annotation.SuppressLint;
+import android.arch.lifecycle.Observer;
 import android.inputmethodservice.Keyboard;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.DrawerLayout;
@@ -28,8 +30,15 @@ import com.zhiyihealth.registration.adapter.DoctorListAdapter;
 import com.zhiyihealth.registration.lib_base.base.BaseActivity;
 import com.zhiyihealth.registration.lib_base.constants.Components;
 import com.zhiyihealth.registration.lib_base.constants.Formatter;
+import com.zhiyihealth.registration.lib_base.contract.MainContract;
+import com.zhiyihealth.registration.lib_base.data.CacheDataSource;
+import com.zhiyihealth.registration.lib_base.entity.DoctorInfo;
 import com.zhiyihealth.registration.lib_base.entity.DoctorInfoCheck;
 import com.zhiyihealth.registration.lib_base.entity.LinearItemDecoration;
+import com.zhiyihealth.registration.lib_base.entity.QuickRegistr;
+import com.zhiyihealth.registration.lib_base.model.RegistrationModel;
+import com.zhiyihealth.registration.lib_base.presenter.RegistrationPresenter;
+import com.zhiyihealth.registration.lib_base.utils.LiveDataBus;
 import com.zhiyihealth.registration.lib_base.utils.ToastUtils;
 
 import java.lang.reflect.Method;
@@ -47,7 +56,7 @@ import static registration.zhiyihealth.com.lib_ime.view.SoftKeyContainer.KEYCODE
 /**
  * @author Lihao
  */
-public class NRegistrationActivity extends BaseActivity implements View.OnClickListener, PinYinConnector {
+public class NRegistrationActivity extends BaseActivity implements View.OnClickListener, PinYinConnector, MainContract.RegistrationView {
     private FrameLayout mDwMenu;
     private DrawerLayout mDrawerLayout;
 
@@ -75,6 +84,12 @@ public class NRegistrationActivity extends BaseActivity implements View.OnClickL
 
     private PinYinManager.ImeState mImeState;
 
+    private RegistrationPresenter mPresenter;
+
+    private String sysUserId;
+
+    private DoctorListAdapter doctorAdapter;
+
     @SuppressLint("HandlerLeak")
     private class MHandler extends Handler {
         @Override
@@ -94,10 +109,24 @@ public class NRegistrationActivity extends BaseActivity implements View.OnClickL
         super.onCreate(savedInstanceState);
 
         initView();
+        mPresenter = new RegistrationPresenter(NRegistrationActivity.this, new RegistrationModel(), this);
+        if (manager == null) {
+            manager = PinYinManager.getInstance();
+        }
+        manager.addObserver(this);
+        mDoctorList = new ArrayList<>();
+        LiveDataBus.get().with("key_test", DoctorInfo.class)
+                .observe(this, new Observer<DoctorInfo>() {
+                    @Override
+                    public void onChanged(@Nullable DoctorInfo info) {
+                    }
+                });
+
         onListener();
         initData();
         initAdapter();
     }
+
 
     @Override
     protected int setContentView() {
@@ -173,19 +202,7 @@ public class NRegistrationActivity extends BaseActivity implements View.OnClickL
 
     @SuppressLint("SetTextI18n")
     private void initData() {
-
-        if (manager == null) {
-            manager = PinYinManager.getInstance();
-        }
-        manager.addObserver(this);
-
-        mDoctorList = new ArrayList<>();
-        for (int i = 0; i < 4; i++) {
-            DoctorInfoCheck info = new DoctorInfoCheck();
-            info.setRealName("张三" + i);
-            info.setSex(i % 2 == 0 ? "1" : "2");
-            mDoctorList.add(info);
-        }
+        mDoctorList = DoctorInfoCheck.transformationNoCheck(CacheDataSource.getClinicDoctorInfo());
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false) {
             @Override
             public boolean canScrollVertically() {
@@ -198,11 +215,11 @@ public class NRegistrationActivity extends BaseActivity implements View.OnClickL
     }
 
     private void initAdapter() {
-        int resId = R.layout.item_doctor;
-        DoctorListAdapter doctorAdapter = new DoctorListAdapter(this, resId, mDoctorList);
+        doctorAdapter = new DoctorListAdapter(this, mDoctorList);
         doctorAdapter.setOnItemClickListener((adapter, view, position) -> {
             DoctorInfoCheck infoCheck = (DoctorInfoCheck) adapter.getItem(position);
             assert infoCheck != null;
+            sysUserId = infoCheck.getDoctorId();
             if (infoCheck.isFulled()) {
                 return;
             }
@@ -215,6 +232,10 @@ public class NRegistrationActivity extends BaseActivity implements View.OnClickL
     protected void onResume() {
         super.onResume();
         disableShowSoftInput();
+
+        if (mPresenter != null) {
+            mPresenter.getDoctorInfo(CacheDataSource.getClinicId());
+        }
     }
 
     /**
@@ -292,19 +313,8 @@ public class NRegistrationActivity extends BaseActivity implements View.OnClickL
                         .callAsyncCallbackOnMainThread(fragmentdrawer);
                 break;
             case R.id.btn_registration:
-                CC.obtainBuilder(Components.ComponentPrint)
-                        .setActionName(Components.ComponentPrintNumber)
-                        .addParam("number", "12")
-                        .addParam("patientName", "杨亚坤")
-                        .addParam("doctorName", "李时珍")
-                        .addParam("registerDate", Formatter.DATE_FORMAT4.format(new Date()))
-                        .addParam("needWait", 5)
-                        .build()
-                        .callAsyncCallbackOnMainThread((cc, result) -> {
-                            if (result.isSuccess()) {
-                                ToastUtils.showToast(NRegistrationActivity.this, "打印完毕");
-                            }
-                        });
+                // TODO 患者信息判断
+                mPresenter.quickRegistration(CacheDataSource.getClinicId(), sysUserId);
                 break;
             default:
                 break;
@@ -363,9 +373,7 @@ public class NRegistrationActivity extends BaseActivity implements View.OnClickL
                 manager.switchLanguage(isCN);
             } else if (primaryCode == Keyboard.KEYCODE_SHIFT) {
                 manager.switchUpper(isCN);
-            }
-
-            if (primaryCode == KeyEvent.KEYCODE_DEL) {
+            } else if (primaryCode == KeyEvent.KEYCODE_DEL) {
                 manager.responseSoftKeyClick(softKey);
             } else {
                 if (manager.isCanInput()) {
@@ -373,6 +381,36 @@ public class NRegistrationActivity extends BaseActivity implements View.OnClickL
                 }
             }
         }
+    }
+
+    @Override
+    public void onQuickRegistration(QuickRegistr quickRegistr) {
+        showLoading("挂号成功，正在为您打印挂号单");
+        mPresenter.getDoctorInfo(CacheDataSource.getClinicId());
+        sysUserId = "";
+        CC.obtainBuilder(Components.ComponentPrint)
+                .setActionName(Components.ComponentPrintNumber)
+                .addParam("number", quickRegistr.getRegistrationNo())
+                .addParam("doctorName", quickRegistr.getDoctorName())
+                .addParam("registerDate", Formatter.DATE_FORMAT4.format(new Date()))
+                .addParam("registrationId", quickRegistr.getRegistrationId())
+                .addParam("sysUserId", quickRegistr.getSysUserId())
+                .addParam("periodType", quickRegistr.getPeriodType())
+                .build()
+                .callAsyncCallbackOnMainThread((cc, result) -> {
+                    if (result.isSuccess()) {
+                        ToastUtils.showToast(NRegistrationActivity.this, "打印完毕");
+                        hideLoading();
+                    }
+                });
+    }
+
+    @Override
+    public void onDoctorResult(ArrayList<DoctorInfo> result) {
+        mDoctorList.clear();
+        mDoctorList = DoctorInfoCheck.transformationNoCheck(CacheDataSource.getClinicDoctorInfo());
+        doctorAdapter.setNewData(mDoctorList);
+        doctorAdapter.notifyDataSetChanged();
     }
 
     @Override

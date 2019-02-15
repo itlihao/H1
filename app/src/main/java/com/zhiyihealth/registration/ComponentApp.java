@@ -8,7 +8,6 @@ import com.billy.cc.core.component.CC;
 import com.billy.cc.core.component.CCResult;
 import com.billy.cc.core.component.IComponent;
 import com.zhiyihealth.registration.lib_base.constants.Components;
-import com.zhiyihealth.registration.lib_user.LoginActivity;
 
 /**
  * Created by Lihao on 2019-1-10.

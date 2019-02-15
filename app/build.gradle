@@ -17,6 +17,7 @@ android {
         ndk {
             abiFilters 'armeabi-v7a', "x86", "x86_64"
         }
+
         manifestPlaceholders = [
                 JPUSH_PKGNAME: applicationId,
                 JPUSH_APPKEY : "4d44b63825062cea20ac2d76", //JPush上注册的包名对应的appkey.

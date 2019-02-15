@@ -1,7 +1,11 @@
-package com.zhiyihealth.registration.lib_user.contract;
+package com.zhiyihealth.registration.lib_base.contract;
 
+import com.zhiyihealth.registration.lib_base.entity.DoctorInfo;
 import com.zhiyihealth.registration.lib_base.entity.LoginContent;
 import com.zhiyihealth.registration.lib_base.base.BaseView;
+import com.zhiyihealth.registration.lib_base.entity.QuickRegistr;
+
+import java.util.ArrayList;
 
 /**
  *
@@ -20,5 +24,14 @@ public interface MainContract {
          * 修改密码结果
          */
         void onResetResult(String result);
+    }
+
+    interface RegistrationView extends BaseView {
+        /**
+         *快速挂号返回结果
+         */
+        void onQuickRegistration(QuickRegistr result);
+
+        void onDoctorResult(ArrayList<DoctorInfo> result);
     }
 }

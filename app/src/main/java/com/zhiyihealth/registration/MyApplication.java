@@ -42,18 +42,21 @@ public class MyApplication extends BaseApplication {
         super.onCreate();
 
         NetDataSource.init(this, BuildConfig.DEBUG, "MyApplication");
-        /*Beta.strToastYourAreTheLatestVersion = "";
+        // bugly升级配置
+        Beta.strToastYourAreTheLatestVersion = "";
         Beta.strToastCheckingUpgrade = "";
         Beta.strToastCheckUpgradeError = "";
 
         //初始化bugly
-        Bugly.init(getApplicationContext(), "382063db84", BuildConfig.DEBUG);
-        //初始化极光
-        JPushInterface.setDebugMode(true);
-        JPushInterface.init(this);
+        Bugly.init(getApplicationContext(), "0368fdf4c3", BuildConfig.DEBUG);
+
         CC.enableVerboseLog(true);
         CC.enableDebug(true);
         CC.enableRemoteCC(true);
+
+        /*//初始化极光
+        JPushInterface.setDebugMode(true);
+        JPushInterface.init(this);
 
         GrowingIO.startWithConfiguration(this, new Configuration()
                 .trackAllFragments()

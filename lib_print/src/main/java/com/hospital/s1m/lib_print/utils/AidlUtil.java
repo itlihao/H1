@@ -1,25 +1,44 @@
 package com.hospital.s1m.lib_print.utils;
 
+import android.annotation.SuppressLint;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.content.res.AssetManager;
 import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.Rect;
+import android.graphics.Typeface;
 import android.os.IBinder;
 import android.os.RemoteException;
+import android.support.v4.content.ContextCompat;
 import android.widget.Toast;
 
+import com.google.zxing.BarcodeFormat;
+import com.google.zxing.EncodeHintType;
+import com.google.zxing.MultiFormatWriter;
+import com.google.zxing.WriterException;
+import com.google.zxing.common.BitMatrix;
+import com.google.zxing.qrcode.QRCodeWriter;
+import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel;
 import com.hospital.s1m.lib_print.ConfigureParams;
 import com.hospital.s1m.lib_print.R;
 import com.hospital.s1m.lib_print.bean.TableItem;
 import com.zhiyihealth.registration.lib_base.constants.Formatter;
+import com.zhiyihealth.registration.lib_base.data.SPDataSource;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 import woyou.aidlservice.jiuiv5.ICallback;
 import woyou.aidlservice.jiuiv5.IWoyouService;
@@ -261,161 +280,50 @@ public class AidlUtil {
 
     }
 
-    public void printNumber(String number, String patientName, String doctorName, String registerDate, int needWait) throws RemoteException {
+    public void printNumber(Context context, String number, String doctorName, String registrationId,
+                            String sysUserId, String period) throws RemoteException {
         if (woyouService == null) {
             Toast.makeText(context, R.string.print_toast_2, Toast.LENGTH_LONG).show();
             return;
         }
 
+        String content = "r=" + registrationId;
         woyouService.lineWrap(1, null);
         woyouService.setAlignment(1, null);
-        woyouService.printTextWithFont("致医健康未来诊所\n", null, 37, null);
+        String clinic = (String) SPDataSource.get(context, "clinic", "");
+//        String clinic = "致毉健康健康服務事業部測試診所";
+        woyouService.printTextWithFont( clinic + "\n", null, 36, null);
         String time = Formatter.DATE_FORMAT0.format(new Date());
-        woyouService.printTextWithFont(time + "\n", null, 23, null);
+        woyouService.printTextWithFont(time + "\n", null, 24, null);
         woyouService.lineWrap(1, null);
-        woyouService.printTextWithFont(" 下午\n", null, 34, null);
-        woyouService.printTextWithFont("022", null, 80, null);
+        printBitmaps(AidlUtil.createNum(period, Integer.parseInt(number)));
         woyouService.lineWrap(1, null);
-        woyouService.printTextWithFont("挂号医生: 李时珍\n", null, 26, null);
-        woyouService.printTextWithFont("-----------------------------\n", null, 26, null);
+        woyouService.printTextWithFont("挂号医生: " + doctorName + "\n", null, 26, null);
+        woyouService.printTextWithFont("--------------------------------------\n", null, 20, null);
         woyouService.setAlignment(0, null);
-        woyouService.printTextWithFont("  温馨提示\n", null, 26, null);
-        woyouService.printTextWithFont("  • 请您按照号码等待叫号就诊\n", null, 23, null);
-        woyouService.printTextWithFont("  • 过号请主动与医生护士联系\n", null, 23, null);
-        woyouService.printTextWithFont("  • 出诊时间：\n", null, 23, null);
+        woyouService.printTextWithFont(" 温馨提示\n", null, 26, null);
+        printBitmaps(AidlUtil.createTime("上午 08:00-12:00", "下午 14:00-18:00", "晚上 19:00-21:00"));
         woyouService.setAlignment(1, null);
-        woyouService.printTextWithFont("上午 08:00-12:00\n", null, 23, null);
-        woyouService.printTextWithFont("下午 14:00-18:00\n", null, 23, null);
-        woyouService.printTextWithFont("晚上 14:00-18:00\n", null, 23, null);
-        woyouService.printTextWithFont("-----------------------------\n", null, 26, null);
-        woyouService.setAlignment(0, null);
-        woyouService.printTextWithFont("  请您在候诊期间\n", null, 20, null);
-        woyouService.printTextWithFont("  扫描二维码填写个人信息\n", null, 20, null);
-        woyouService.lineWrap(1, null);
-        woyouService.setAlignment(1, null);
-        woyouService.printQRCode("https://www.baidu.com/", 5, 2, null);
-//        print3Line();
+        woyouService.printTextWithFont("-------------------------------------\n", null, 20, null);
+        printBitmaps(AidlUtil.createImage(content));
 
-        LinkedList<TableItem> tableItems = new LinkedList<>();
-
-        if(needWait>0){
-            TableItem tableItem0 = new TableItem();
-            tableItem0.setText(new String[]{"等候人数:", needWait+""});
-            tableItem0.setWidth(new int[]{1, 1});
-            tableItem0.setAlign(new int[]{2, 0});
-            tableItems.add(tableItem0);
-        }
-
-        TableItem tableItem = new TableItem();
-        tableItem.setText(new String[]{"就诊序号:", number});
-        tableItem.setWidth(new int[]{1, 1});
-        tableItem.setAlign(new int[]{2, 0});
-
-        TableItem tableItem1 = new TableItem();
-        tableItem1.setText(new String[]{"患者姓名:", patientName});
-        tableItem1.setWidth(new int[]{1, 1});
-        tableItem1.setAlign(new int[]{2, 0});
-
-        TableItem tableItem2 = new TableItem();
-        tableItem2.setText(new String[]{"医生姓名:", doctorName});
-        tableItem2.setWidth(new int[]{1, 1});
-        tableItem2.setAlign(new int[]{2, 0});
-
-        TableItem tableItem3 = new TableItem();
-        tableItem3.setText(new String[]{"挂号时间:", registerDate});
-        tableItem3.setWidth(new int[]{1, 1});
-        tableItem3.setAlign(new int[]{2, 0});
-
-        tableItems.add(tableItem);
-        tableItems.add(tableItem1);
-        tableItems.add(tableItem2);
-        tableItems.add(tableItem3);
-//        printTable(tableItems);
-
-//        print3Line();
         woyouService.lineWrap(6, null);
     }
 
-    /**
-     * 打印表格
-     */
-    public void printTable(LinkedList<TableItem> list) {
-        if (woyouService == null) {
-            Toast.makeText(context, R.string.print_toast_2, Toast.LENGTH_LONG).show();
-            return;
-        }
-
-        try {
-            for (TableItem tableItem : list) {
-                woyouService.printColumnsString(tableItem.getText(), tableItem.getWidth(), tableItem.getAlign(), null);
-            }
-            woyouService.lineWrap(3, null);
-        } catch (RemoteException e) {
-            e.printStackTrace();
-        }
-    }
-
-    /*
-     *打印图片
-     */
-    public void printBitmap(Bitmap bitmap) {
-        if (woyouService == null) {
-            Toast.makeText(context, R.string.print_toast_2, Toast.LENGTH_LONG).show();
-            return;
-        }
-
-        try {
-            woyouService.setAlignment(1, null);
-            woyouService.printBitmap(bitmap, null);
-            woyouService.lineWrap(3, null);
-        } catch (RemoteException e) {
-            e.printStackTrace();
-        }
-    }
-
-
-    /**
-     * 打印图片和文字按照指定排列顺序
-     */
-    public void printBitmap(Bitmap bitmap, int orientation) {
+    public void printBitmaps(Bitmap bitmap) {
         if (woyouService == null) {
             Toast.makeText(context, "服务已断开！", Toast.LENGTH_LONG).show();
             return;
         }
 
         try {
-            if (orientation == 0) {
-                woyouService.printBitmap(bitmap, null);
-                woyouService.printText("横向排列\n", null);
-                woyouService.printBitmap(bitmap, null);
-                woyouService.printText("横向排列\n", null);
-            } else {
-                woyouService.printBitmap(bitmap, null);
-                woyouService.printText("\n纵向排列\n", null);
-                woyouService.printBitmap(bitmap, null);
-                woyouService.printText("\n纵向排列\n", null);
-            }
-            woyouService.lineWrap(3, null);
+            woyouService.printBitmap(bitmap, null);
+//            woyouService.lineWrap(3, null);
         } catch (RemoteException e) {
             e.printStackTrace();
         }
     }
 
-    /*
-     * 空打三行！
-     */
-    public void print3Line() {
-        if (woyouService == null) {
-            Toast.makeText(context, R.string.print_toast_2, Toast.LENGTH_LONG).show();
-            return;
-        }
-
-        try {
-            woyouService.lineWrap(3, null);
-        } catch (RemoteException e) {
-            e.printStackTrace();
-        }
-    }
 
 
     public void sendRawData(byte[] data) {
@@ -445,4 +353,180 @@ public class AidlUtil {
             e.printStackTrace();
         }
     }
+
+    public static Bitmap createNum(String period, int registrationNo) {
+        int picWidth = 384;
+        int picHeight = 85;
+        int textColor = Color.BLACK;
+        int textSize = 80;
+
+        //最终生成的图片
+        Bitmap result = Bitmap.createBitmap(picWidth, picHeight, Bitmap.Config.ARGB_8888);
+
+        Paint paint = new Paint();
+        Paint paint2 = new Paint();
+        paint.setColor(Color.WHITE);
+        Canvas canvas = new Canvas(result);
+
+        //先画一整块白色矩形块
+        canvas.drawRect(0, 0, picWidth, picHeight, paint);
+
+        //画title文字 34 80  String num, String st
+        Rect bounds = new Rect();
+        paint.setColor(textColor);
+        paint.setTextSize(textSize);
+
+        Rect bound = new Rect();
+        paint2.setColor(textColor);
+        paint2.setTextSize(34);
+
+        //获取文字的字宽高，以便将文字与图片中心对齐
+        @SuppressLint("DefaultLocale")
+        String s1 = String.format("%03d", registrationNo);
+        String s2 = period;
+        paint.getTextBounds(s1, 0, s1.length(), bounds);
+        paint2.getTextBounds(s2, 0, s2.length(), bound);
+
+        int tHeight = bounds.height();
+        int tWidth1 = bounds.width();
+        int tWidth2 = bound.width();
+        int tw = tWidth1 + tWidth2;
+
+        canvas.drawText(s1, picWidth / 2 - tw / 2 + tWidth2 + 5 , tHeight, paint);
+        canvas.drawText(s2, picWidth / 2 - tw / 2 - 10, tHeight - 5, paint2);
+
+        canvas.save(Canvas.ALL_SAVE_FLAG);
+        canvas.restore();
+        return result;
+    }
+
+    public static Bitmap createTime(String timea, String timeh, String timey) {
+        int picWidth = 384;
+        int picHeight = 150;
+        int textColor = Color.BLACK;
+        int textSize = 24;
+
+        //最终生成的图片
+        Bitmap result = Bitmap.createBitmap(picWidth, picHeight, Bitmap.Config.ARGB_8888);
+
+        Paint paint = new Paint();
+        paint.setColor(Color.WHITE);
+        Canvas canvas = new Canvas(result);
+
+        //先画一整块白色矩形块
+        canvas.drawRect(0, 0, picWidth, picHeight, paint);
+
+        //画title文字
+        Rect bounds = new Rect();
+        paint.setColor(textColor);
+        paint.setTextSize(textSize);
+        //获取文字的字宽高，以便将文字与图片中心对齐
+        String s1 = " • 请您按照号码等待叫号就诊\n";
+        String s2 = " • 过号请主动与医生护士联系\n";
+        String titl = " • 出诊时间：";
+        paint.getTextBounds(titl, 0, titl.length(), bounds);
+        int tHeight = bounds.height();
+        int tWidth = bounds.width();
+
+        canvas.drawText(s1, 5, tHeight, paint);
+        canvas.drawText(s2, 5, tHeight * 2  + 5, paint);
+        canvas.drawText(titl, 5, tHeight * 3  + 10, paint);
+
+        canvas.drawText(timea, tWidth + 15, tHeight * 3  + 10, paint);
+        canvas.drawText(timeh, tWidth + 15, tHeight * 4  + 15, paint);
+        canvas.drawText(timey, tWidth + 15, tHeight * 5  + 20, paint);
+
+        canvas.save(Canvas.ALL_SAVE_FLAG);
+        canvas.restore();
+        return result;
+    }
+
+    public static Bitmap createImage(String content) {
+        String title = "请您在候诊期间";
+        String title2 = "扫描二维码填写个人信息";
+        String url = "http://zyyzs.com/" + content;
+        int picWidth = 384;//生成图片的宽度
+        int picHeight = 130;//生成图片的高度
+        int titleTextSize = 20;
+        int textColor = Color.BLACK;
+        int qrWidth = 170;
+        int qrHeight = 170;
+
+        //最终生成的图片
+        Bitmap result = Bitmap.createBitmap(picWidth, picHeight, Bitmap.Config.ARGB_8888);
+
+        Paint paint = new Paint();
+        paint.setColor(Color.WHITE);
+        Canvas canvas = new Canvas(result);
+
+        //先画一整块白色矩形块
+        canvas.drawRect(0, 0, picWidth, picHeight, paint);
+
+        //画title文字
+        Rect bounds = new Rect();
+        paint.setColor(textColor);
+        paint.setTextSize(titleTextSize);
+        //获取文字的字宽高，以便将文字与图片中心对齐
+        paint.getTextBounds(title, 0, title.length(), bounds);
+        int yy = picHeight / 2;
+        int y2 = picHeight / 2 + bounds.height();
+        canvas.drawText(title, 0, yy - 5, paint);
+        canvas.drawText(title2, 0, y2 + 3, paint);
+
+        //画二维码
+        //配置参数
+        Map<EncodeHintType, Object> hints = new HashMap<>();
+        hints.put(EncodeHintType.CHARACTER_SET, "utf-8");
+        //容错级别
+        hints.put(EncodeHintType.ERROR_CORRECTION, ErrorCorrectionLevel.H);
+        BitMatrix bitMatrix;
+        Bitmap image = null;
+        try {
+            bitMatrix = new QRCodeWriter().encode(url, BarcodeFormat.QR_CODE, qrWidth, qrHeight, hints);
+            bitMatrix = reduceWhite(bitMatrix, 0);
+            int width = bitMatrix.getWidth();
+            int height = bitMatrix.getHeight();
+            image = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+            for (int x = 0; x < width; x++) {
+                for (int y = 0; y < height; y++) {
+                    image.setPixel(x, y, bitMatrix.get(x, y) ? 0xFF000000 : 0xFFFFFFFF);
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        int imgYH = Objects.requireNonNull(image).getHeight();
+        int padding = picHeight - imgYH;
+        paint.setColor(Color.BLACK);
+        canvas.drawBitmap(Objects.requireNonNull(image), picWidth - picHeight, padding / 2, paint);
+
+        canvas.save(Canvas.ALL_SAVE_FLAG);
+        canvas.restore();
+        return result;
+    }
+
+    /**
+     * 缩小生成二维码白边框(删除白边 重新添加新白边)
+     */
+    private static BitMatrix reduceWhite(BitMatrix matrix, int margin) {
+        int tempM = margin * 2;
+        // 获取二维码图案的属性
+        int[] rec = matrix.getEnclosingRectangle();
+        int resWidth = rec[2] + tempM;
+        int resHeight = rec[3] + tempM;
+        // 按照自定义边框生成新的BitMatrix
+        BitMatrix resMatrix = new BitMatrix(resWidth, resHeight);
+        resMatrix.clear();
+        // 循环，将二维码图案绘制到新的bitMatrix中
+        for (int i = margin; i < resWidth - margin; i++) {
+            for (int j = margin; j < resHeight - margin; j++) {
+                if (matrix.get(i - margin + rec[0], j - margin + rec[1])) {
+                    resMatrix.set(i, j);
+                }
+            }
+        }
+        return resMatrix;
+    }
+
 }

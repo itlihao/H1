@@ -4,12 +4,12 @@ import android.content.Context;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
+import com.zhiyihealth.registration.lib_base.contract.MainContract;
 import com.zhiyihealth.registration.lib_base.entity.DoctorInfo;
 import com.zhiyihealth.registration.lib_base.entity.LoginContent;
 import com.zhiyihealth.registration.lib_base.listener.ResponseListener;
 import com.zhiyihealth.registration.lib_base.utils.MD5Utils;
 import com.zhiyihealth.registration.lib_user.bean.LoginParmar;
-import com.zhiyihealth.registration.lib_user.contract.MainContract;
 import com.zhiyihealth.registration.lib_user.model.LoginModel;
 
 import java.util.ArrayList;
@@ -64,7 +64,7 @@ public class LoginPresenter {
     }
 
     private void getDoctorInfo(LoginParmar loginParmar, LoginContent resultLogin) {
-        mLoginModel.getDoctorsInfo(mContext, resultLogin.getClinicId(), new ResponseListener<ArrayList<DoctorInfo>>() {
+        mLoginModel.getEmployList(mContext, resultLogin.getClinicId(), new ResponseListener<ArrayList<DoctorInfo>>() {
             @Override
             public ArrayList<DoctorInfo> convert(String jsonStr) {
                 return JSON.parseObject(jsonStr, new TypeReference<ArrayList<DoctorInfo>>() {

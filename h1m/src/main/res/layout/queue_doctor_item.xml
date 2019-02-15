@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="136dp"
+    android:layout_marginBottom="16dp"
+    android:background="@android:color/white"
+    android:clickable="true"
+    android:focusable="true"
+    tools:ignore="SpUsage">
+
+    <ImageView
+        android:id="@+id/iv_doctor"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_marginStart="30dp"
+        android:src="@drawable/iv_doctor_man" />
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_centerVertical="true"
+        android:layout_marginStart="20dp"
+        android:layout_toEndOf="@+id/iv_doctor"
+        android:gravity="center_vertical">
+
+        <TextView
+            android:id="@+id/tv_doctor_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="郭秋实"
+            android:textColor="@color/color_1A"
+            android:textSize="34sp" />
+
+        <TextView
+            android:id="@+id/tv_number"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/tv_doctor_name"
+            android:layout_marginTop="20dp"
+            android:textColor="@color/color_B5"
+            android:textSize="26sp" />
+    </RelativeLayout>
+
+    <RadioButton
+        android:id="@+id/new_rgboy"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:button="@drawable/rbutton_shape"
+        android:layout_alignParentEnd="true"
+        android:layout_centerVertical="true"
+        android:layout_marginEnd="30dp"
+        android:clickable="false" />
+
+
+</RelativeLayout>

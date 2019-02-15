@@ -121,6 +121,14 @@ public class DeviceInfoUtils {
         return Build.MANUFACTURER != null && Build.MANUFACTURER.equals("SUNMI") && (Build.MODEL.contains("V2") || Build.MODEL.equals("P1_4G"));
     }
 
+    public static boolean isSunMiPos() {
+        return Build.MANUFACTURER != null && Build.MANUFACTURER.equals("SUNMI") && (Build.MODEL.contains("V2") || Build.MODEL.equals("P1_4G"));
+    }
+
+    public static boolean isSunMiT1mini() {
+        return Build.MANUFACTURER != null && Build.MANUFACTURER.equals("SUNMI") && (Build.MODEL.contains("T1mini"));
+    }
+
     /**
      * 判断是否是双屏设备
      * -1 未检测 0 没有 1 有副屏

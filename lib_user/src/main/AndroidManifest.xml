@@ -9,11 +9,16 @@
 
     <application>
         <activity
-            android:name=".LoginActivity"
+            android:name=".ui.LoginActivity"
             android:label="@string/title_activity_login"
             android:screenOrientation="sensorLandscape"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".FindActivity"></activity>
+        <activity
+            android:launchMode="singleTask"
+            android:name=".ui.FindActivity" />
+        <activity
+            android:launchMode="singleTask"
+            android:name=".ui.LoginMActivity" />
     </application>
 
 </manifest>

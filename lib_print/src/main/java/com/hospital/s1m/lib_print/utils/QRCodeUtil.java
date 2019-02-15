@@ -124,5 +124,38 @@ public class QRCodeUtil {
         return bitmap;
     }
 
+    /*public static String generateImg(String originalImg, String qrCodeImg, String shareDesc) throws Exception {
+        // 加载原图图片
+        BufferedImage imageLocal = ImageIO.read(new URL(originalImg));
+        // 加载用户的二维码
+        BufferedImage imageCode = ImageIO.read(new URL(qrCodeImg));
+        // 以原图片为模板
+        Graphics2D g = imageLocal.createGraphics();
+        AlphaComposite ac = AlphaComposite.getInstance(AlphaComposite.SRC_OVER);
+        g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_GASP);
+        g.setComposite(ac);
+        g.setBackground(Color.WHITE);
+        // 在模板上添加用户二维码(地址,左边距,上边距,图片宽度,图片高度,未知)
+        g.drawImage(imageCode, 100, imageLocal.getHeight() - 190, 160, 158, null);
+        // 设置文本样式
+        g.setFont(new Font("微软雅黑", Font.PLAIN, 40));
+        g.setColor(Color.red);
+        // 计算文字长度，计算居中的x点坐标
+        g.drawString(shareDesc, imageLocal.getWidth() - 330, imageLocal.getHeight() - 530);
+
+        // 设置文本样式
+        g.setFont(new Font("微软雅黑", Font.PLAIN + Font.BOLD, 16));
+        g.setColor(Color.WHITE);
+        // 计算文字长度，计算居中的x点坐标
+        String caewm = "长按二维码";
+        g.drawString(caewm, 105, imageLocal.getHeight() - 10);
+
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        saveAsJPEG(imageLocal, out);
+        out.close();
+        return urlImgDownInputStream(FileUtils.parse(out));
+    }*/
+
 
 }

@@ -15,7 +15,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
- * Created by Lihao on 2019-1-9.
+ * @author Lihao
+ * @date 2019-1-9
  * Email heaolihao@163.com
  */
 public class LoginModel {
@@ -24,11 +25,17 @@ public class LoginModel {
     private static final String FORGET = "forget";
     private static final String CLINIC = "clinic";
 
+    /**
+     * 登录
+     */
     public void login(Context context, LoginParmar parmar, ResponseListener<LoginContent> listener) {
         CacheDataSource.setBaseUrl(Urls.usercenter);
         NetDataSource.post(context, Urls.login, parmar, listener);
     }
 
+    /**
+     * 保存诊所信息
+     */
     public void saveSystemData(Context context, LoginContent loginContent, ArrayList<DoctorInfo> result) {
         CacheDataSource.setClinicId(loginContent.getClinicId());
         CacheDataSource.setDoctorMainId(loginContent.getUserId());
@@ -40,6 +47,9 @@ public class LoginModel {
         CacheDataSource.setUserToken(loginContent.getUserToken());
     }
 
+    /**
+     * 保存用户名和密码
+     */
     public void saveUserNameAndPassword(Context context, LoginParmar parmar) {
         try {
             if (parmar.isForget()) {
@@ -55,10 +65,14 @@ public class LoginModel {
         }
     }
 
-    public void getDoctorsInfo(Context context, String clinciId, ResponseListener<ArrayList<DoctorInfo>> listener) {
-        HashMap<String, String> clinci = new HashMap<>();
-        clinci.put("clinicId", clinciId);
-        NetDataSource.post(context, Urls.getListByClinicId, clinci, listener);
+    /**
+     * 获取医生列表
+     */
+    public void getEmployList(Context context, String clinicId, ResponseListener<ArrayList<DoctorInfo>> listener) {
+        CacheDataSource.setBaseUrl(Urls.workbench);
+        HashMap<String, String> clinic = new HashMap<>(5);
+        clinic.put("clinicId", clinicId);
+        NetDataSource.postNoHeader(context, Urls.GET_EMPLOY_LIST, clinic, listener);
     }
 
     public LoginParmar getInitData(Context mContext) {

@@ -3,7 +3,7 @@ package com.hospital.s1m.lib_print.applogic;
 
 import android.util.Log;
 
-import com.hospital.s1m.lib_print.utils.AidlUtil;
+import com.hospital.s1m.lib_print.Utils.AidlUtil;
 
 public class ApplogicUser extends BaseAppLogic {
 

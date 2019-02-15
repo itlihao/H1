@@ -22,7 +22,7 @@ import com.zhiyihealth.registration.lib_base.data.SPDataSource;
 import com.zhiyihealth.registration.lib_base.entity.DoctorInfo;
 import com.zhiyihealth.registration.lib_base.entity.EmnuLeft;
 import com.zhiyihealth.registration.lib_base.view.MDDialog;
-import com.zhiyihealth.registration.lib_user.LoginActivity;
+import com.zhiyihealth.registration.lib_user.ui.LoginActivity;
 import com.zhiyihealth.registration.lib_user.R;
 import com.zhiyihealth.registration.lib_user.adapter.DrawAdapter;
 import com.zhiyihealth.registration.lib_user.bean.MenuItem;
@@ -68,7 +68,7 @@ public class FragmentMenu extends Fragment {
 
         ArrayList<DoctorInfo> clinicDoctorInfo = CacheDataSource.getClinicDoctorInfo();
         for (DoctorInfo doctorInfo : clinicDoctorInfo) {
-            if (doctorInfo.getSysUserId().equals(CacheDataSource.getDoctorMainId())) {
+            if (doctorInfo.getDoctorId().equals(CacheDataSource.getDoctorMainId())) {
                 if ("1".equals(doctorInfo.getSex())) {
                     mUserHead.setImageResource(R.drawable.ic_head_man);
                 } else {

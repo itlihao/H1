@@ -8,7 +8,10 @@ import com.billy.cc.core.component.CC;
 import com.billy.cc.core.component.CCResult;
 import com.billy.cc.core.component.IComponent;
 import com.zhiyihealth.registration.lib_base.constants.Components;
+import com.zhiyihealth.registration.lib_base.utils.DeviceInfoUtils;
 import com.zhiyihealth.registration.lib_user.fragment.FragmentMenu;
+import com.zhiyihealth.registration.lib_user.ui.LoginActivity;
+import com.zhiyihealth.registration.lib_user.ui.LoginMActivity;
 
 /**
  * Created by Lihao on 2019-1-9.
@@ -40,7 +43,13 @@ public class ComponentUser implements IComponent {
 
     private void todoLogin(CC cc) {
         Context context = cc.getContext();
-        Intent intent = new Intent(context, LoginActivity.class);
+        Intent intent = new Intent(context, LoginMActivity.class);
+        if (DeviceInfoUtils.isSunMiT1mini()) {
+            intent = new Intent(context, LoginActivity.class);
+        } else if (DeviceInfoUtils.isSunMiPos()){
+            intent = new Intent(context, LoginMActivity.class);
+        }
+
         if (!(context instanceof Activity)) {
             //调用方没有设置context或app间组件跳转，context为application
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);

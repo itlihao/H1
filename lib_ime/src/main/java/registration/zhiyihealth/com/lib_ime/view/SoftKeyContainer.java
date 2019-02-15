@@ -5,6 +5,7 @@ import android.content.Context;
 import android.inputmethodservice.Keyboard;
 import android.inputmethodservice.KeyboardView;
 import android.os.Handler;
+import android.support.v4.content.ContextCompat;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.GestureDetector;
@@ -20,6 +21,8 @@ import android.widget.PopupWindow;
 import com.android.inputmethod.pinyin.NewCandidatesContainer;
 import com.android.inputmethod.pinyin.NewComposingView;
 import com.android.inputmethod.pinyin.SoftKey;
+import com.zhiyihealth.registration.lib_base.utils.LogUtils;
+import com.zhiyihealth.registration.lib_base.utils.Utils;
 
 import java.util.List;
 
@@ -101,6 +104,7 @@ public class SoftKeyContainer extends LinearLayout {
         LayoutInflater.from(context).inflate(R.layout.softkey_container, this);
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     public void initialize(Context context, SoftKeyListener cListener) {
         skListener = cListener;
         mContext = context;
@@ -112,13 +116,15 @@ public class SoftKeyContainer extends LinearLayout {
 //        k3 = new Keyboard(ctx, R.xml.punctuate);
         keyboardView = findViewById(R.id.keyboard_view);
         frameLayout = findViewById(R.id.search_edit_frame);
-        keyboardView.setDelDrawable(this.getResources().getDrawable(R.drawable.delete));
-        keyboardView.setLowDrawable(this.getResources().getDrawable(R.drawable.keyboard_shift));
-        keyboardView.setUpDrawable(this.getResources().getDrawable(R.drawable.keyboard_caps));
+        keyboardView.setDelDrawable(ContextCompat.getDrawable(mContext, R.drawable.delete));
+        keyboardView.setLowDrawable(ContextCompat.getDrawable(mContext, R.drawable.keyboard_shift));
+        keyboardView.setUpDrawable(ContextCompat.getDrawable(mContext, R.drawable.keyboard_caps));
         keyboardView.setKeyboard(k1);
         keyboardView.setEnabled(true);
         keyboardView.setPreviewEnabled(false);
         keyboardView.setOnKeyboardActionListener(listener);
+
+        keyboardView.setOnTouchListener((v, event) -> event.getAction() == MotionEvent.ACTION_MOVE);
 
         mChoiceNotifier = new ChoiceNotifier();
         /*
@@ -279,12 +285,24 @@ public class SoftKeyContainer extends LinearLayout {
                 if (key.label != null && isword(key.label.toString())) {
                     key.label = key.label.toString().toUpperCase();
                 }
+
+                if (isCN) {
+                    if (key.label != null && key.codes[0] == KEYCODE_SWITCH) {
+                        key.label = "英/中";
+
+                        hiddenComposeView();
+                        hiddenCandiatesContainer();
+                    }
+                }
+            }
+            if (isCN) {
+                isCN = false;
             }
         }
         isupper = !isupper;
         keyboardView.setCap(isupper);
 
-        changeEng();
+//        changeEng();
     }
 
     private void changeLowerCase() {

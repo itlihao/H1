@@ -29,9 +29,9 @@ public class DoctorListAdapter extends BaseQuickAdapter<DoctorInfoCheck, BaseVie
         this.preCheck = preCheck;
     }
 
-    public DoctorListAdapter(Context context, int layoutResId, ArrayList<DoctorInfoCheck> data) {
-        super(layoutResId, data);
-        data.get(preCheck).setCheck(true);
+    public DoctorListAdapter(Context context, ArrayList<DoctorInfoCheck> data) {
+        super(R.layout.item_doctor, data);
+//        data.get(preCheck).setCheck(true);
         mContext = context;
     }
 
@@ -59,5 +59,7 @@ public class DoctorListAdapter extends BaseQuickAdapter<DoctorInfoCheck, BaseVie
         } else {
             helper.setImageResource(R.id.iv_doctor, R.drawable.ic_head_women);
         }
+
+        helper.setText(R.id.tv_list_num, item.getWaitNum() + "人排队中...");
     }
 }

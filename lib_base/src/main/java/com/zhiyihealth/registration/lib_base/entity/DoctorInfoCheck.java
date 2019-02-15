@@ -7,13 +7,13 @@ import java.util.ArrayList;
 
 public class DoctorInfoCheck extends DoctorInfo {
 
-    public static ArrayList<DoctorInfoCheck> transformation(ArrayList<DoctorInfo> infos) {
+    /*public static ArrayList<DoctorInfoCheck> transformation(ArrayList<DoctorInfo> infos) {
         ArrayList<DoctorInfoCheck> result = new ArrayList<>();
         DoctorInfoCheck check = new DoctorInfoCheck();
-        /*check.setRealName("全部");
+        *//*check.setRealName("全部");
         check.setSysUserId("");
         check.setCheck(false);
-        result.add(check);*/
+        result.add(check);*//*
         if (infos == null) {
             return result;
         }
@@ -29,51 +29,52 @@ public class DoctorInfoCheck extends DoctorInfo {
             }
             result.add(check);
         }
-        /*for (DoctorInfo info : infos) {
+        *//*for (DoctorInfo info : infos) {
             check = new DoctorInfoCheck();
             check.setRealName(info.getRealName());
             check.setSysUserId(info.getSysUserId());
             check.setCheck(false);
             result.add(check);
-        }*/
+        }*//*
         return result;
-    }
+    }*/
 
-    public static ArrayList<DoctorInfoCheck> transformationNoAll(ArrayList<DoctorInfo> infos){
+    /*public static ArrayList<DoctorInfoCheck> transformationNoAll(ArrayList<DoctorInfo> infos) {
         ArrayList<DoctorInfoCheck> result = new ArrayList<>();
-        DoctorInfoCheck check ;
+        DoctorInfoCheck check;
 
-        if(infos==null){
+        if (infos == null) {
             return result;
         }
-        for (int i=0;i<infos.size();i++){
+        for (int i = 0; i < infos.size(); i++) {
             check = new DoctorInfoCheck();
             check.setRealName(infos.get(i).getRealName());
             check.setSysUserId(infos.get(i).getSysUserId());
             check.setSex(infos.get(i).getSex());
-            if(CacheDataSource.getDoctorMainId().equals(infos.get(i).getSysUserId())){
+            if (CacheDataSource.getDoctorMainId().equals(infos.get(i).getSysUserId())) {
                 check.setCheck(true);
 //                CacheDataSource.setPtposition(i+1);
-            }else{
+            } else {
                 check.setCheck(false);
             }
             result.add(check);
         }
         return result;
-    }
+    }*/
 
-    public static ArrayList<DoctorInfoCheck> transformationNoCheck(ArrayList<DoctorInfo> infos){
+    public static ArrayList<DoctorInfoCheck> transformationNoCheck(ArrayList<DoctorInfo> infos) {
         ArrayList<DoctorInfoCheck> result = new ArrayList<>();
-        DoctorInfoCheck check ;
+        DoctorInfoCheck check;
 
-        if(infos==null){
+        if (infos == null) {
             return result;
         }
-        for (int i=0;i<infos.size();i++){
+        for (int i = 0; i < infos.size(); i++) {
             check = new DoctorInfoCheck();
             check.setRealName(infos.get(i).getRealName());
-            check.setSysUserId(infos.get(i).getSysUserId());
+            check.setDoctorId(infos.get(i).getDoctorId());
             check.setSex(infos.get(i).getSex());
+            check.setWaitNum(infos.get(i).getWaitNum());
             check.setCheck(false);
             result.add(check);
         }
@@ -81,7 +82,6 @@ public class DoctorInfoCheck extends DoctorInfo {
     }
 
     private boolean isCheck;
-    private boolean isFulled = false;
 
     public boolean isCheck() {
         return isCheck;
@@ -92,10 +92,6 @@ public class DoctorInfoCheck extends DoctorInfo {
     }
 
     public boolean isFulled() {
-        return isFulled;
-    }
-
-    public void setFulled(boolean fulled) {
-        isFulled = fulled;
+        return "0".equals(getFirstRegi());
     }
 }

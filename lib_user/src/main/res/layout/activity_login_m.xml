@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/color_white"
+    tools:ignore="SpUsage">
+    <ImageView
+        android:id="@+id/imageView2"
+        android:layout_width="180dp"
+        android:layout_height="180dp"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="216dp"
+        android:src="@drawable/app_icon"
+        tools:ignore="ContentDescription" />
+
+    <EditText
+        android:id="@+id/et_login_username"
+        android:layout_width="640dp"
+        android:layout_height="80dp"
+        android:layout_below="@id/imageView2"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="80dp"
+        android:background="@drawable/shape_input_edit"
+        android:drawableStart="@drawable/icon_user"
+        android:drawablePadding="20dp"
+        android:hint="@string/user_hint_name"
+        android:inputType="phone"
+        android:maxLength="11"
+        android:paddingStart="20dp"
+        android:singleLine="true"
+        android:text=""
+        android:textColor="@color/color_66"
+        android:textColorHint="@color/color_CC"
+        android:textSize="32sp"
+        android:textCursorDrawable="@drawable/user_editcursor"
+        tools:ignore="RtlSymmetry" />
+
+    <EditText
+        android:id="@+id/et_login_password"
+        android:layout_width="640dp"
+        android:layout_height="80dp"
+        android:layout_below="@id/et_login_username"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="24dp"
+        android:background="@drawable/shape_input_edit"
+        android:drawableStart="@drawable/icon_pawd"
+        android:drawablePadding="20dp"
+        android:hint="@string/user_hint_pwd"
+        android:inputType="textPassword"
+        android:paddingStart="20dp"
+        android:singleLine="true"
+        android:text=""
+        android:textColor="@color/color_66"
+        android:textColorHint="@color/color_CC"
+        android:textSize="32sp"
+        android:textCursorDrawable="@drawable/user_editcursor"
+        tools:ignore="RtlSymmetry" />
+
+    <RelativeLayout
+        android:id="@+id/rl_editpwd"
+        android:layout_width="640dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/et_login_password"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="20dp"
+        android:paddingStart="20dp"
+        android:paddingEnd="10dp">
+
+        <android.support.v7.widget.AppCompatCheckBox
+            android:id="@+id/remember_pwd"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:layout_centerVertical="true"
+            android:button="@drawable/checkbox_shape"
+            android:paddingStart="10dp"
+            android:checked="true"
+            android:text="@string/user_save_password"
+            android:textColor="@color/color_99"
+            android:textSize="26sp"
+            android:theme="@style/user_yycheckbox" />
+
+        <TextView
+            android:id="@+id/forget_pwd"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:text="@string/user_reset_password"
+            android:textColor="@color/color_3999FF"
+            android:textSize="20sp"
+            android:visibility="gone"
+            tools:ignore="RelativeOverlap" />
+    </RelativeLayout>
+
+    <Button
+        android:id="@+id/btn_login"
+        android:layout_width="670dp"
+        android:layout_height="80dp"
+        android:layout_below="@id/rl_editpwd"
+        android:layout_marginTop="104dp"
+        android:layout_centerHorizontal="true"
+        android:background="@drawable/user_loginshape_btn"
+        android:text="@string/user_login"
+        android:textColor="@android:color/white"
+        android:textSize="36sp"
+        tools:ignore="SpUsage" />
+</RelativeLayout>

@@ -1,4 +1,4 @@
-package com.zhiyihealth.registration.lib_user;
+package com.zhiyihealth.registration.lib_user.ui;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
@@ -13,12 +13,12 @@ import android.widget.TextView;
 import com.billy.cc.core.component.CC;
 import com.zhiyihealth.registration.lib_base.base.BaseActivity;
 import com.zhiyihealth.registration.lib_base.constants.Components;
-import com.zhiyihealth.registration.lib_base.data.CacheDataSource;
 import com.zhiyihealth.registration.lib_base.data.SPDataSource;
 import com.zhiyihealth.registration.lib_base.entity.LoginContent;
 import com.zhiyihealth.registration.lib_base.utils.ToastUtils;
+import com.zhiyihealth.registration.lib_user.R;
 import com.zhiyihealth.registration.lib_user.bean.LoginParmar;
-import com.zhiyihealth.registration.lib_user.contract.MainContract;
+import com.zhiyihealth.registration.lib_base.contract.MainContract;
 import com.zhiyihealth.registration.lib_user.model.LoginModel;
 import com.zhiyihealth.registration.lib_user.presenter.LoginPresenter;
 
