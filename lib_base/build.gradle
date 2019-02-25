@@ -48,4 +48,6 @@ dependencies {
 
     api 'cn.jiguang.sdk:jpush:3.1.6'
     api 'cn.jiguang.sdk:jcore:1.2.5'
+
+    implementation files('libs/pinyin4j-2.5.0.jar')
 }

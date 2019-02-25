@@ -69,7 +69,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
-            <com.zhiyihealth.registration.lib_base.view.AVLoadingIndicatorView
+            <com.hospital.s1m.lib_base.view.AVLoadingIndicatorView
                 android:id="@+id/av_avi"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -78,6 +78,16 @@
                 android:visibility="visible"
                 app:indicatorName="BallBeatIndicator"
                 app:indicatorColor="@color/color_4DA2F2"/>
+
+            <TextView
+                android:id="@+id/tv_no"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="29dp"
+                android:textColor="@color/color_1A"
+                android:textSize="32sp"
+                android:gravity="center"
+                android:visibility="visible"/>
         </RelativeLayout>
     </LinearLayout>
 

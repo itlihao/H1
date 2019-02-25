@@ -18,8 +18,6 @@ import com.android.inputmethod.pinyin.KeyMapDream;
 import com.android.inputmethod.pinyin.NewEnglishInputProcessor;
 import com.android.inputmethod.pinyin.PinyinDecoderService;
 import com.android.inputmethod.pinyin.SoftKey;
-import com.zhiyihealth.registration.lib_base.utils.LogUtils;
-import com.zhiyihealth.registration.lib_base.utils.Utils;
 
 import java.util.ArrayList;
 import java.util.List;

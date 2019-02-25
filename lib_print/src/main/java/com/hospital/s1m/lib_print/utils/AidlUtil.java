@@ -7,35 +7,28 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
-import android.content.res.AssetManager;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
-import android.graphics.Typeface;
 import android.os.IBinder;
 import android.os.RemoteException;
-import android.support.v4.content.ContextCompat;
 import android.widget.Toast;
 
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.EncodeHintType;
-import com.google.zxing.MultiFormatWriter;
-import com.google.zxing.WriterException;
 import com.google.zxing.common.BitMatrix;
 import com.google.zxing.qrcode.QRCodeWriter;
 import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel;
 import com.hospital.s1m.lib_print.ConfigureParams;
 import com.hospital.s1m.lib_print.R;
-import com.hospital.s1m.lib_print.bean.TableItem;
-import com.zhiyihealth.registration.lib_base.constants.Formatter;
-import com.zhiyihealth.registration.lib_base.data.SPDataSource;
+import com.hospital.s1m.lib_base.constants.Formatter;
+import com.hospital.s1m.lib_base.data.SPDataSource;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -280,14 +273,21 @@ public class AidlUtil {
 
     }
 
-    public void printNumber(Context context, String number, String doctorName, String registrationId,
-                            String sysUserId, String period) throws RemoteException {
+    public void printNumber(Context context, int number, String doctorName, String registrationId,
+                            String sysUserId, int periodType, int registerType, String timea, String timeh, String timey) throws RemoteException {
         if (woyouService == null) {
             Toast.makeText(context, R.string.print_toast_2, Toast.LENGTH_LONG).show();
             return;
         }
 
-        String content = "r=" + registrationId;
+        String period = "上午";
+        if (periodType == 2) {
+            period = "下午";
+        } else if (periodType == 3) {
+            period = "晚上";
+        }
+
+        String content = "id=" + registrationId + "&t=" + periodType;
         woyouService.lineWrap(1, null);
         woyouService.setAlignment(1, null);
         String clinic = (String) SPDataSource.get(context, "clinic", "");
@@ -296,16 +296,18 @@ public class AidlUtil {
         String time = Formatter.DATE_FORMAT0.format(new Date());
         woyouService.printTextWithFont(time + "\n", null, 24, null);
         woyouService.lineWrap(1, null);
-        printBitmaps(AidlUtil.createNum(period, Integer.parseInt(number)));
+        printBitmaps(AidlUtil.createNum(period, number));
         woyouService.lineWrap(1, null);
         woyouService.printTextWithFont("挂号医生: " + doctorName + "\n", null, 26, null);
         woyouService.printTextWithFont("--------------------------------------\n", null, 20, null);
         woyouService.setAlignment(0, null);
         woyouService.printTextWithFont(" 温馨提示\n", null, 26, null);
-        printBitmaps(AidlUtil.createTime("上午 08:00-12:00", "下午 14:00-18:00", "晚上 19:00-21:00"));
+        printBitmaps(AidlUtil.createTime(timea, timeh, timey));
         woyouService.setAlignment(1, null);
         woyouService.printTextWithFont("-------------------------------------\n", null, 20, null);
-        printBitmaps(AidlUtil.createImage(content));
+        if (registerType == 1) {
+            printBitmaps(AidlUtil.createImage(content));
+        }
 
         woyouService.lineWrap(6, null);
     }
@@ -444,7 +446,7 @@ public class AidlUtil {
     public static Bitmap createImage(String content) {
         String title = "请您在候诊期间";
         String title2 = "扫描二维码填写个人信息";
-        String url = "http://zyyzs.com/" + content;
+        String url = "https://bt-clinicpe.yunzhenshi.com?" + content;
         int picWidth = 384;//生成图片的宽度
         int picHeight = 130;//生成图片的高度
         int titleTextSize = 20;
@@ -478,7 +480,7 @@ public class AidlUtil {
         Map<EncodeHintType, Object> hints = new HashMap<>();
         hints.put(EncodeHintType.CHARACTER_SET, "utf-8");
         //容错级别
-        hints.put(EncodeHintType.ERROR_CORRECTION, ErrorCorrectionLevel.H);
+        hints.put(EncodeHintType.ERROR_CORRECTION, ErrorCorrectionLevel.M);
         BitMatrix bitMatrix;
         Bitmap image = null;
         try {

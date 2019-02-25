@@ -21,8 +21,6 @@ import android.widget.PopupWindow;
 import com.android.inputmethod.pinyin.NewCandidatesContainer;
 import com.android.inputmethod.pinyin.NewComposingView;
 import com.android.inputmethod.pinyin.SoftKey;
-import com.zhiyihealth.registration.lib_base.utils.LogUtils;
-import com.zhiyihealth.registration.lib_base.utils.Utils;
 
 import java.util.List;
 
@@ -58,7 +56,7 @@ public class SoftKeyContainer extends LinearLayout {
     /**
      * Used to show the floating window.显示输入的拼音字符串PopupWindow 定时器
      */
-    private PopupTimer mFloatingWindowTimer = new PopupTimer();
+    private PopupTimer mFloatingWindowTimer;
 
     /**
      * View to show candidates list. 候选词视图集装箱
@@ -150,12 +148,14 @@ public class SoftKeyContainer extends LinearLayout {
             mFloatingWindowTimer.cancelShowing();
             mFloatingWindow.dismiss();
         }
+
         // 中文输入，显示在候选区左边的浮动窗口.
         mFloatingWindow = new PopupWindow(this);
         mFloatingWindow.setClippingEnabled(false);
         mFloatingWindow.setBackgroundDrawable(null);
         mFloatingWindow.setInputMethodMode(PopupWindow.INPUT_METHOD_NOT_NEEDED);
         mFloatingWindow.setContentView(mFloatingContainer);
+        mFloatingWindowTimer = new PopupTimer();
 
 //        setCandidatesViewShown(true);
     }
@@ -398,6 +398,9 @@ public class SoftKeyContainer extends LinearLayout {
         if (visible == View.VISIBLE) {
             frameLayout.setVisibility(View.GONE);
         }
+
+        hiddenComposeView();
+        hiddenCandiatesContainer();
     }
 
     private boolean isword(String str) {
@@ -438,16 +441,19 @@ public class SoftKeyContainer extends LinearLayout {
 
             if (!mFloatingWindow.isShowing()) {
                 // 显示候选词PopupWindow
-                mFloatingWindow.showAtLocation(mCandidatesContainer,
-                        Gravity.START | Gravity.TOP, mParentLocation[0],
-                        mParentLocation[1] - mFloatingWindow.getHeight());
+                if (mCandidatesContainer.getWindowToken() != null) {
+                    mFloatingWindow.showAtLocation(mCandidatesContainer,
+                            Gravity.START | Gravity.TOP, mParentLocation[0],
+                            mParentLocation[1] - mFloatingWindow.getHeight());
+                }
             } else {
                 // 更新候选词PopupWindow
-                mFloatingWindow
-                        .update(mParentLocation[0],
-                                mParentLocation[1] - mFloatingWindow.getHeight(),
-                                mFloatingWindow.getWidth(),
-                                mFloatingWindow.getHeight());
+                if (mCandidatesContainer.getWindowToken() != null) {
+                    mFloatingWindow.update(mParentLocation[0],
+                            mParentLocation[1] - mFloatingWindow.getHeight(),
+                            mFloatingWindow.getWidth(),
+                            mFloatingWindow.getHeight());
+                }
             }
         }
     }

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.zhiyihealth.registration.lib_user">
+    package="com.hospital.s1m.lib_user">
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
@@ -9,16 +9,16 @@
 
     <application>
         <activity
-            android:name=".ui.LoginActivity"
+            android:name="com.hospital.s1m.lib_user.ui.LoginActivity"
             android:label="@string/title_activity_login"
             android:screenOrientation="sensorLandscape"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:launchMode="singleTask"
-            android:name=".ui.FindActivity" />
+            android:name="com.hospital.s1m.lib_user.ui.FindActivity" />
         <activity
             android:launchMode="singleTask"
-            android:name=".ui.LoginMActivity" />
+            android:name="com.hospital.s1m.lib_user.ui.LoginMActivity" />
     </application>
 
 </manifest>

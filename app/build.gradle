@@ -8,11 +8,11 @@ android {
     }
 
     defaultConfig {
-        applicationId "com.zhiyihealth.registration"
+        applicationId "com.hospital.s1m"
         minSdkVersion rootProject.minVersion
         targetSdkVersion rootProject.targetVersion
         versionCode 1
-        versionName "1.0"
+        versionName "1.0.1"
 
         ndk {
             abiFilters 'armeabi-v7a', "x86", "x86_64"
@@ -56,6 +56,9 @@ android {
     buildTypes {
         release {
             minifyEnabled false
+            shrinkResources false
+            zipAlignEnabled true
+            signingConfig signingConfigs.config
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }

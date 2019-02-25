@@ -4,9 +4,9 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/color_main_back"
-    android:padding="20dp"
     android:focusable="true"
     android:focusableInTouchMode="true"
+    android:padding="20dp"
     tools:context=".ui.LoginActivity">
 
     <RelativeLayout
@@ -58,8 +58,8 @@
             android:text=""
             android:textColor="@color/color_1A"
             android:textColorHint="@color/color_B5"
-            android:textSize="24sp"
             android:textCursorDrawable="@drawable/user_editcursor"
+            android:textSize="24sp"
             tools:ignore="RtlSymmetry" />
 
         <EditText
@@ -74,14 +74,14 @@
             android:drawablePadding="16dp"
             android:hint="@string/user_hint_pwd"
             android:inputType="textPassword"
-
+            android:maxLength="12"
             android:paddingStart="16dp"
             android:singleLine="true"
             android:text=""
             android:textColor="@color/color_1A"
             android:textColorHint="@color/color_B5"
-            android:textSize="24sp"
             android:textCursorDrawable="@drawable/user_editcursor"
+            android:textSize="24sp"
             tools:ignore="RtlSymmetry" />
 
         <RelativeLayout

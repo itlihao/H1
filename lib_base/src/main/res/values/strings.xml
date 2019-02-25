@@ -20,6 +20,7 @@
     <string name="sr_confirm">确定</string>
     <string name="sr_cancel">取消</string>
     <string name="sr_quit">确定退出当前账号？</string>
+    <string name="sr_registration_suc">挂号成功，您的候诊序号为</string>
 
     <string name="sr_choose_doctor">选择医生</string>
     <string name="sr_patient_info">患者信息</string>

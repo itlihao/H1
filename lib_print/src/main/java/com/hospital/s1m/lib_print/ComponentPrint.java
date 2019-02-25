@@ -7,7 +7,7 @@ import com.billy.cc.core.component.CCResult;
 import com.billy.cc.core.component.IComponent;
 import com.hospital.s1m.lib_print.utils.AidlUtil;
 import com.hospital.s1m.lib_print.utils.QRCodeUtil;
-import com.zhiyihealth.registration.lib_base.constants.Components;
+import com.hospital.s1m.lib_base.constants.Components;
 
 public class ComponentPrint implements IComponent {
     @Override
@@ -23,21 +23,20 @@ public class ComponentPrint implements IComponent {
                 CC.sendCCResult(cc.getCallId(), CCResult.success("getApplogic", new ApplogicUser()));
                 break;*/
             case Components.ComponentPrintNumber:
-                String number = cc.getParamItem("number");
+                int number = cc.getParamItem("number");
                 String doctorName = cc.getParamItem("doctorName");
                 String registrationId = cc.getParamItem("registrationId");
                 String sysUserId = cc.getParamItem("sysUserId");
+                int registerType = cc.getParamItem("registerType");
                 int periodType = cc.getParamItem("periodType");
-                String period = "上午";
-                if (periodType == 2) {
-                    period = "下午";
-                } else if (periodType == 3) {
-                    period = "晚上";
-                }
+                String timea = cc.getParamItem("timeS1");
+                String timeh = cc.getParamItem("timeS2");
+                String timey = cc.getParamItem("timeS3");
+
                 try {
                     //居中
-                    AidlUtil.getInstance().printNumber(cc.getContext(), number, doctorName, registrationId, sysUserId, period);
-//                    AidlUtil.getInstance().printBitmaps(AidlUtil.createImage(cc.getContext(),"https://www.baidu.com/", "请您在候诊期间", "扫描二维码填写个人信息"));
+                    AidlUtil.getInstance().printNumber(cc.getContext(), number, doctorName, registrationId,
+                            sysUserId, periodType, registerType, timea, timeh, timey);
                     CC.sendCCResult(cc.getCallId(), CCResult.success());
                 } catch (Exception e) {
                     CC.sendCCResult(cc.getCallId(), CCResult.error("打印失败"));

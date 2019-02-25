@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="registration.zhiyihealth.com.h1m">
+    package="com.hospital.s1m">
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <application
-        android:name=".MyApplication"
+        android:name="com.hospital.s1m.MyApplication"
         android:allowBackup="true"
         android:icon="@drawable/icon"
         android:label="@string/app_name"
@@ -13,7 +13,7 @@
         android:theme="@style/AppTheme"
         tools:replace="android:icon,android:name,android:theme,android:label,allowBackup"
         tools:ignore="GoogleAppIndexingWarning">
-        <activity android:name=".ui.MainActivity"
+        <activity android:name="com.hospital.s1m.ui.MainActivity"
             android:launchMode="singleTask">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -23,10 +23,10 @@
         </activity>
         <activity
             android:launchMode="singleTask"
-            android:name=".ui.RegistrationActivity" />
+            android:name="com.hospital.s1m.ui.RegistrationActivity" />
 
         <!-- 开机启动 -->
-        <receiver android:name=".receiver.BootReceiver">
+        <receiver android:name="com.hospital.s1m.receiver.BootReceiver">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
 

@@ -1,12 +1,11 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="com.zhiyihealth.registration.lib_base" >
+    package="com.hospital.s1m.lib_base" >
 
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.BLUETOOTH" />
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
-    <uses-permission android:name="zhiyihealth.com.cn.c1.permission.JPUSH_MESSAGE" />
 
     <application>
         <!-- Required SDK 核心功能-->
@@ -25,7 +24,7 @@
         </service>
 
         <receiver
-            android:name=".jpush.JPushReceiver"
+            android:name="com.hospital.s1m.lib_base.jpush.JPushReceiver"
             android:exported="false"
             android:enabled="true">
             <intent-filter>
@@ -34,17 +33,21 @@
                 <action android:name="cn.jpush.android.intent.NOTIFICATION_RECEIVED" /> <!--Required  用户接收SDK通知栏信息的intent-->
                 <action android:name="cn.jpush.android.intent.NOTIFICATION_OPENED" /> <!--Required  用户打开自定义通知栏的intent-->
                 <action android:name="cn.jpush.android.intent.CONNECTION" /><!-- 接收网络变化 连接/断开 since 1.6.3 -->
-                <category android:name="cn.com.zhiyihealth.c1e" />
-                <category android:name="zhiyihealth.com.cn.c1" />
+                <category android:name="com.hospital.s1m" />
             </intent-filter>
         </receiver>
 
         <receiver
-            android:name=".jpush.MyJPushMessageReceiver" >
+            android:name="com.hospital.s1m.lib_base.jpush.MyJPushMessageReceiver" >
             <intent-filter>
                 <action android:name="cn.jpush.android.intent.RECEIVE_MESSAGE" />
-                <category android:name="zhiyihealth.com.cn.c1" />
-                <category android:name="cn.com.zhiyihealth.c1e" />
+                <category android:name="com.hospital.s1m" />
+            </intent-filter>
+        </receiver>
+
+        <receiver android:name="com.hospital.s1m.lib_base.base.NetBroadcastReceiver">
+            <intent-filter>
+                <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
             </intent-filter>
         </receiver>
 

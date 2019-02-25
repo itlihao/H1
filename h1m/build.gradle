@@ -8,7 +8,7 @@ android {
     }
 
     defaultConfig {
-        applicationId "registration.zhiyihealth.com.h1m"
+        applicationId "com.hospital.s1m"
         minSdkVersion rootProject.minVersion
         targetSdkVersion rootProject.targetVersion
         versionCode 1
@@ -55,6 +55,9 @@ android {
     buildTypes {
         release {
             minifyEnabled false
+            shrinkResources false
+            zipAlignEnabled true
+            signingConfig signingConfigs.config
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
