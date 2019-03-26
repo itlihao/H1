@@ -3,6 +3,7 @@ package com.hospital.s1m;
 import android.annotation.SuppressLint;
 import android.arch.lifecycle.Observer;
 import android.content.Context;
+import android.graphics.Color;
 import android.inputmethodservice.Keyboard;
 import android.os.Bundle;
 import android.os.Handler;
@@ -12,6 +13,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
@@ -57,6 +59,7 @@ import com.hospital.s1m.lib_base.utils.PhoneNumUtils;
 import com.hospital.s1m.lib_base.utils.PinyinUtils;
 import com.hospital.s1m.lib_base.utils.ToastUtils;
 import com.hospital.s1m.lib_base.utils.UUID;
+import com.hospital.s1m.lib_base.utils.Utils;
 import com.hospital.s1m.lib_base.view.CustomPopWindow;
 import com.hospital.s1m.lib_base.view.MDDialog;
 
@@ -96,6 +99,8 @@ public class NRegistrationActivity extends BaseActivity implements View.OnClickL
 
     private RecyclerView doctorView;
 
+    private SwipeRefreshLayout mSwiperefreshlayout;
+
     private ArrayList<DoctorInfoCheck> mDoctorList;
 
     private SoftKeyContainer softKeyContainer;
@@ -122,6 +127,7 @@ public class NRegistrationActivity extends BaseActivity implements View.OnClickL
     private CustomPopWindow mCustomPopWindow;
     private View contentView;
     private boolean isChoose = false;
+    private boolean isRegistration = false;
     private PatientItemListAdapter adapter;
     private RecyclerView patientList;
 
@@ -210,6 +216,10 @@ public class NRegistrationActivity extends BaseActivity implements View.OnClickL
 
         mCancel = findViewById(R.id.btn_cancel);
         mCancel.setOnClickListener(this);
+
+        mSwiperefreshlayout = findViewById(R.id.swiperefreshlayout);
+        mSwiperefreshlayout.setColorSchemeColors(Color.rgb(47, 223, 189));
+        mSwiperefreshlayout.setOnRefreshListener(this::refresh);
 
         softKeyContainer = findViewById(R.id.skContainer);
         SoftKeyNotifier softKeyNotifier = new SoftKeyNotifier();
@@ -342,7 +352,7 @@ public class NRegistrationActivity extends BaseActivity implements View.OnClickL
 
     @SuppressLint("SetTextI18n")
     private void initData() {
-        mDoctorList = DoctorInfoCheck.transformationNoCheck(CacheDataSource.getClinicDoctorInfo());
+        mDoctorList = DoctorInfoCheck.transformation(CacheDataSource.getClinicDoctorInfo());
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false) {
             @Override
             public boolean canScrollVertically() {
@@ -361,9 +371,6 @@ public class NRegistrationActivity extends BaseActivity implements View.OnClickL
             assert infoCheck != null;
             sysUserId = infoCheck.getDoctorId();
             doctorName = infoCheck.getRealName();
-            if (infoCheck.isFulled()) {
-                return;
-            }
             setCheck(adapter, position);
         });
         doctorView.setAdapter(doctorAdapter);
@@ -521,6 +528,14 @@ public class NRegistrationActivity extends BaseActivity implements View.OnClickL
                 DoctorInfoCheck item1 = adapter1.getItem(preCheck);
                 Objects.requireNonNull(item1).setCheck(false);
             }
+            if (preCheck == position) {
+                adapter1.setPreCheck(-1);
+                adapter.notifyDataSetChanged();
+                sysUserId = "";
+                doctorName = "";
+                return;
+            }
+
             Objects.requireNonNull(item).setCheck(true);
             adapter1.setPreCheck(position);
             adapter.notifyDataSetChanged();
@@ -573,7 +588,10 @@ public class NRegistrationActivity extends BaseActivity implements View.OnClickL
                 }
                 info.setSysUserIdRegi(sysUserId);
 
-                mPresenter.saveAndRegistration(info);
+                if (!Utils.isFastClick() || isRegistration) {
+                    isRegistration = true;
+                    mPresenter.saveAndRegistration(info);
+                }
                 break;
             case R.id.btn_cancel:
                 clearText();
@@ -589,7 +607,7 @@ public class NRegistrationActivity extends BaseActivity implements View.OnClickL
     @SuppressLint("DefaultLocale")
     private boolean checkValues(PatientAndRegistrationParmar info) {
         if (!PinyinUtils.isPatientName(info.getUserName())) {
-            ToastUtils.showToast(this, "请输入最多2~8个汉字,字母或数字");
+            ToastUtils.showToast(this, "请输入正确的患者姓名");
             return false;
         }
         if (info.getSex() == 0) {
@@ -599,6 +617,21 @@ public class NRegistrationActivity extends BaseActivity implements View.OnClickL
         Pattern pattern = Pattern.compile("[0-9]*");
         Calendar cal = Calendar.getInstance();
         int year = cal.get(Calendar.YEAR);
+
+        if (TextUtils.isEmpty(info.getYear())) {
+            ToastUtils.showToast(this, "年份不能为空");
+            return false;
+        }
+
+        if (TextUtils.isEmpty(info.getMonth())) {
+            ToastUtils.showToast(this, "月份不能为空");
+            return false;
+        }
+
+        if (TextUtils.isEmpty(info.getDay())) {
+            ToastUtils.showToast(this, "日期不能为空");
+            return false;
+        }
 
         if (!pattern.matcher(info.getYear()).matches() || Integer.parseInt(info.getYear()) > year) {
             ToastUtils.showToast(this, "请输入正确的年份");
@@ -660,6 +693,13 @@ public class NRegistrationActivity extends BaseActivity implements View.OnClickL
         }
     }
 
+    public void refresh() {
+        mDoctorList.clear();
+        doctorAdapter.getData().clear();
+        doctorAdapter.notifyDataSetChanged();
+        mPresenter.getDoctorInfo(CacheDataSource.getClinicId(), 1);
+    }
+
     @Override
     public void onShowCandiateView(PinYinManager.DecodingInfo info, PinYinManager.ImeState imeState, boolean showComposingView) {
         Log.w("DemoActivity", "搜索结果回传: " + info + " ," + imeState + " ," + showComposingView);
@@ -705,12 +745,14 @@ public class NRegistrationActivity extends BaseActivity implements View.OnClickL
         }
     }
 
+    @SuppressLint("DefaultLocale")
     @Override
     public void onQuickRegistration(RegistrCall quickRegistr) {
         clearText();
 
         mPresenter.getDoctorInfo(CacheDataSource.getClinicId(), 1);
         sysUserId = "";
+        isRegistration = false;
 
         boolean print = (boolean) SPDataSource.get(this, "needPrint", true);
         if (print) {
@@ -751,7 +793,7 @@ public class NRegistrationActivity extends BaseActivity implements View.OnClickL
                     .setMessages(Objects.requireNonNull(this).getString(com.hospital.s1m.lib_user.R.string.sr_registration_suc))
                     .setShowAvi(false)
                     .setshowRNo(true)
-                    .setRNo(quickRegistr.getRegistrationNo() + "号")
+                    .setRNo(String.format("%03d", quickRegistr.getRegistrationNo()) + "号")
                     .setWidthMaxDp(440)
                     .setShowNegativeButton(false)
                     .setShowPositiveButton(false)
@@ -765,7 +807,7 @@ public class NRegistrationActivity extends BaseActivity implements View.OnClickL
 
     @Override
     public void onDoctorResult(ArrayList<DoctorInfo> result) {
-        mDoctorList.clear();
+        mSwiperefreshlayout.setRefreshing(false);
         hideLoading();
         mDoctorList = DoctorInfoCheck.transformationNoCheck(CacheDataSource.getClinicDoctorInfo());
         doctorAdapter.setNewData(mDoctorList);
@@ -786,8 +828,14 @@ public class NRegistrationActivity extends BaseActivity implements View.OnClickL
     }
 
     @Override
-    public void onPeriodFullResult(String result) {
+    public void onPeriodFullResult(String result, String type) {
 
+    }
+
+    @Override
+    public void onFailed() {
+        sysUserId = "";
+        isRegistration = false;
     }
 
     @Override

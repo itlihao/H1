@@ -69,4 +69,18 @@ public class Utils {
         }
         return age;
     }
+
+    public static int getPeriodType() {
+        Calendar cal = Calendar.getInstance();
+        int hour = cal.get(Calendar.HOUR_OF_DAY);
+        int type = 0;
+        if (hour > 0 && hour < 12) {
+            type = 1;
+        } else if (hour >= 12 && hour < 18) {
+            type = 2;
+        } else if (hour >= 18 && hour < 24) {
+            type = 3;
+        }
+        return type;
+    }
 }

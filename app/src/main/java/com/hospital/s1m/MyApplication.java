@@ -49,11 +49,7 @@ public class MyApplication extends BaseApplication {
         JPushInterface.setDebugMode(true);
         JPushInterface.init(this);
 
-        /*//初始化极光
-        JPushInterface.setDebugMode(true);
-        JPushInterface.init(this);
-
-        GrowingIO.startWithConfiguration(this, new Configuration()
+        /*GrowingIO.startWithConfiguration(this, new Configuration()
                 .trackAllFragments()
                 .setChannel("XXX应用商店"));
 */

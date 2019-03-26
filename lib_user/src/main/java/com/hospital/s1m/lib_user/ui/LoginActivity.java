@@ -16,6 +16,7 @@ import com.billy.cc.core.component.CC;
 import com.hospital.s1m.lib_base.base.BaseActivity;
 import com.hospital.s1m.lib_base.constants.Components;
 import com.hospital.s1m.lib_base.contract.MainContract;
+import com.hospital.s1m.lib_base.data.CacheDataSource;
 import com.hospital.s1m.lib_base.data.SPDataSource;
 import com.hospital.s1m.lib_base.entity.LoginContent;
 import com.hospital.s1m.lib_base.utils.ToastUtils;
@@ -42,6 +43,8 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
 
     private CC cc = null;
 
+    private int index;
+
     private MHandler mhandler = new MHandler();
 
     @SuppressLint("HandlerLeak")
@@ -67,7 +70,10 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
 
         mPresenter = new LoginPresenter(LoginActivity.this, new LoginModel(), this);
         initData();
-        mhandler.sendEmptyMessageDelayed(1, 1500);
+        index = CacheDataSource.getIndex();
+        if (index == 0) {
+            mhandler.sendEmptyMessageDelayed(1, 1500);
+        }
     }
 
     private void initView() {
@@ -151,6 +157,8 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
 
     @Override
     public void onLoginResult(LoginContent result) {
+        index++;
+        CacheDataSource.setIndex(index);
         boolean quickModel = (boolean) SPDataSource.get(this, "quickRegistration", true);
         if (quickModel) {
             cc = CC.obtainBuilder(Components.COMPONENT_APP_MAIN)

@@ -32,11 +32,12 @@ public class ComponentPrint implements IComponent {
                 String timea = cc.getParamItem("timeS1");
                 String timeh = cc.getParamItem("timeS2");
                 String timey = cc.getParamItem("timeS3");
+                String wait = cc.getParamItem("wait");
 
                 try {
                     //居中
                     AidlUtil.getInstance().printNumber(cc.getContext(), number, doctorName, registrationId,
-                            sysUserId, periodType, registerType, timea, timeh, timey);
+                            sysUserId, periodType, registerType, timea, timeh, timey, wait);
                     CC.sendCCResult(cc.getCallId(), CCResult.success());
                 } catch (Exception e) {
                     CC.sendCCResult(cc.getCallId(), CCResult.error("打印失败"));

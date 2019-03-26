@@ -1,10 +1,20 @@
 package com.hospital.s1m.lib_base.presenter;
 
+import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.text.TextUtils;
+import android.view.KeyEvent;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
+import com.billy.cc.core.component.CC;
+import com.hospital.s1m.lib_base.BaseApplication;
+import com.hospital.s1m.lib_base.R;
+import com.hospital.s1m.lib_base.constants.Components;
 import com.hospital.s1m.lib_base.contract.MainContract;
+import com.hospital.s1m.lib_base.data.CacheDataSource;
 import com.hospital.s1m.lib_base.entity.DoctorInfo;
 import com.hospital.s1m.lib_base.entity.Patient;
 import com.hospital.s1m.lib_base.entity.PatientAndRegistrationParmar;
@@ -13,9 +23,14 @@ import com.hospital.s1m.lib_base.listener.ResponseListener;
 import com.hospital.s1m.lib_base.model.RegistrationModel;
 import com.hospital.s1m.lib_base.utils.CodeUtils;
 import com.hospital.s1m.lib_base.utils.ToastUtils;
+import com.hospital.s1m.lib_base.view.MineDialog;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import io.reactivex.Observable;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.functions.Action;
 
 /**
  * @author Lihao
@@ -41,6 +56,7 @@ public class RegistrationPresenter {
         mModel.quickRegistration(mContext, clinicId, sysUserId, next, new ResponseListener<RegistrCall>() {
             @Override
             public RegistrCall convert(String jsonStr) {
+                mView.hideLoading();
                 return JSON.parseObject(jsonStr, RegistrCall.class);
             }
 
@@ -53,15 +69,20 @@ public class RegistrationPresenter {
             }
 
             @Override
-            public void onFailed(String errorCode, String errorInfo) {
+            public void onFailed(String errorCode, String errorInfo, String type) {
                 if (mView != null) {
                     System.out.println(errorCode + "信息" + errorInfo);
-                    if ("2020106".equals(errorCode)) {
-                        mView.onPeriodFullResult(errorInfo);
+                    if ("2020106".equals(errorCode) || "2020220".equals(errorCode)) {
+
+                        mView.onPeriodFullResult(errorInfo, type);
                     } else {
-                        ToastUtils.showToast(mContext, "" + CodeUtils.setCode(errorCode));
+                        String info = CodeUtils.setCode(errorCode, errorInfo);
+                        if (!TextUtils.isEmpty(info)) {
+                            ToastUtils.showToast(mContext, "" + CodeUtils.setCode(errorCode, errorInfo));
+                        }
                     }
                     mView.hideLoading();
+                    mView.onFailed();
                 }
             }
         });
@@ -85,10 +106,42 @@ public class RegistrationPresenter {
             }
 
             @Override
-            public void onFailed(String errorCode, String errorInfo) {
+            public void onFailed(String errorCode, String errorInfo, String type) {
                 if (mView != null) {
                     mView.hideLoading();
-                    ToastUtils.showToast(mContext, "添加患者失败");
+
+                    if ("2010109".equals(errorCode)) {
+                        Observable.empty().observeOn(AndroidSchedulers.mainThread())
+                                .doOnComplete(() -> {
+                                    //添加"Yes"按钮
+                                    //添加取消
+                                    Activity curActivity = BaseApplication.getCurActivity();
+                                    AlertDialog alertDialog2 = new MineDialog.Builder(curActivity)
+                                            .setMessage(R.string.basic_return)
+                                            .setPositiveButton(R.string.basic_comfirm, (dialogInterface, i) -> {
+                                                CacheDataSource.clearCache();
+                                                CC.obtainBuilder(Components.COMPONENT_USER)
+                                                        .setActionName(Components.COMPONENT_USER_JUMP)
+                                                        .build().call();
+                                                curActivity.finish();
+                                            }).create();
+                                    alertDialog2.show();
+                                    alertDialog2.setOnKeyListener((dialog, keyCode, event) -> {
+                                        if (KeyEvent.KEYCODE_BACK == keyCode) {
+                                            // TODO 禁用返回键
+                                            System.out.print("");
+                                            return true;
+                                        }
+                                        return false;
+                                    });
+                                    alertDialog2.setCancelable(false);
+                                }).subscribe();
+                    } else {
+                        String info = CodeUtils.setCode(errorCode, errorInfo);
+                        if (!TextUtils.isEmpty(info)) {
+                            ToastUtils.showToast(mContext, "" + CodeUtils.setCode(errorCode, errorInfo));
+                        }
+                    }
                 }
             }
         });
@@ -110,10 +163,13 @@ public class RegistrationPresenter {
             }
 
             @Override
-            public void onFailed(String errorCode, String errorInfo) {
+            public void onFailed(String errorCode, String errorInfo, String type) {
                 if (mView != null) {
                     System.out.println(errorCode + "信息" + errorInfo);
-                    ToastUtils.showToast(mContext, "" + CodeUtils.setCode(errorCode));
+                    String info = CodeUtils.setCode(errorCode, errorInfo);
+                    if (!TextUtils.isEmpty(info)) {
+                        ToastUtils.showToast(mContext, "" + CodeUtils.setCode(errorCode, errorInfo));
+                    }
                 }
             }
         });
@@ -144,10 +200,13 @@ public class RegistrationPresenter {
             }
 
             @Override
-            public void onFailed(String errorCode, String errorInfo) {
+            public void onFailed(String errorCode, String errorInfo, String type) {
                 if (mView != null) {
                     System.out.println(errorCode + "信息" + errorInfo);
-                    ToastUtils.showToast(mContext, "" + CodeUtils.setCode(errorCode));
+                    String info = CodeUtils.setCode(errorCode, errorInfo);
+                    if (!TextUtils.isEmpty(info)) {
+                        ToastUtils.showToast(mContext, "" + CodeUtils.setCode(errorCode, errorInfo));
+                    }
                     mView.hideLoading();
                 }
             }

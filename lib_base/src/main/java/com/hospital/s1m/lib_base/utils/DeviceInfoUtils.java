@@ -120,7 +120,8 @@ public class DeviceInfoUtils {
      * @return true 为商米一体机
      */
     public static boolean isSunMiT() {
-        return Build.MANUFACTURER != null && Build.MANUFACTURER.equals("SUNMI") && (Build.MODEL.contains("V2") || Build.MODEL.equals("P1_4G"));
+        Log.w("Utils", Build.MANUFACTURER + " , " + Build.MODEL);
+        return Build.MANUFACTURER != null && Build.MANUFACTURER.equals("SUNMI") && (Build.MODEL.contains("t1host"));
     }
 
     public static boolean isSunMiPos() {

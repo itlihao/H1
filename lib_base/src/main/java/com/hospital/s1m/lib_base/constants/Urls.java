@@ -5,11 +5,13 @@ package com.hospital.s1m.lib_base.constants;
  */
 public interface Urls {
     String usercenter = "http://bt-usercenter.yunzhenshi.com.cn";//登录前和登录
-    //    String workbench = "http://bt-workbench.yunzhenshi.com.cn";//登录前和登录
+//    String workbench = "http://bt-workbench.yunzhenshi.com.cn";//登录前和登录
+    String workbench = "https://bt-hm.zhiyimall.com";
     String patient = "http://bt-patientcenter.yunzhenshi.com.cn";//患者
 
 //   String usercenter="http://192.168.15.232";//登录前和登录
-//   String workbench="http://192.168.15.230";//登录前和登录
+//   String workbench="http://192.168.14.33:8080";//登录前和登录
+//   String patient="http://192.168.15.237";
 
 //    String usercenter = "http://usersystem.yunzhenshi.com";//登录前和登录
 //    String workbench = "http://workbench.yunzhenshi.com";//登录前和登录
@@ -41,7 +43,6 @@ public interface Urls {
     String addCloseList = "/arBreakTime/update";//获取停诊设置
 
 
-    String workbench = "http://120.79.241.190:8080";
     // 医生列表
     String GET_EMPLOY_LIST = "/clinicEmploy/getEmployList";
     // 快速挂号

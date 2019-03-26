@@ -7,7 +7,7 @@ public class DoctorInfo implements Serializable {
     private String doctorId;
     private String sex;
     private String firstRegi;
-    private String waitNum;
+    private int waitNum;
 
 
     public String getRealName() {
@@ -42,11 +42,11 @@ public class DoctorInfo implements Serializable {
         this.firstRegi = firstRegi;
     }
 
-    public String getWaitNum() {
+    public int getWaitNum() {
         return waitNum;
     }
 
-    public void setWaitNum(String waitNum) {
+    public void setWaitNum(int waitNum) {
         this.waitNum = waitNum;
     }
 

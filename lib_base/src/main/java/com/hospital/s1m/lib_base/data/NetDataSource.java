@@ -264,7 +264,7 @@ public class NetDataSource {
             public void onError(Throwable e) {
                 LogUtils.e("接口调用失败", "onError:::" + url + ":::" + e.toString());
                 if (listener != null) {
-                    listener.onFailed("0", e.getMessage());
+                    listener.onFailed("0", e.getMessage(), "");
                 }
             }
 

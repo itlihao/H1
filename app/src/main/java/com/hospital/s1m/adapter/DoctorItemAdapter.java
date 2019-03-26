@@ -32,7 +32,7 @@ public class DoctorItemAdapter extends BaseQuickAdapter<DoctorInfoCheck, BaseVie
     public DoctorItemAdapter(Context context, int layoutResId, ArrayList<DoctorInfoCheck> data) {
         super(layoutResId, data);
         mContext = context;
-        if (data.size() == 1) {
+        if (data.size() == 1 && !data.get(0).isFulled()) {
             data.get(0).setCheck(true);
         }
     }

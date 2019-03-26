@@ -31,6 +31,8 @@ public class CacheDataSource {
     private static int ptposition;
     private static List<Patient> allPatient;
 
+    private static int index = 0;
+
     public static int getPtposition() {
         return ptposition;
     }
@@ -149,6 +151,14 @@ public class CacheDataSource {
 
     public static void setAllPatient(List<Patient> allPatient) {
         CacheDataSource.allPatient = allPatient;
+    }
+
+    public static int getIndex() {
+        return index;
+    }
+
+    public static void setIndex(int index) {
+        CacheDataSource.index = index;
     }
 
     /**

@@ -274,7 +274,7 @@ public class AidlUtil {
     }
 
     public void printNumber(Context context, int number, String doctorName, String registrationId,
-                            String sysUserId, int periodType, int registerType, String timea, String timeh, String timey) throws RemoteException {
+                            String sysUserId, int periodType, int registerType, String timea, String timeh, String timey, String wait) throws RemoteException {
         if (woyouService == null) {
             Toast.makeText(context, R.string.print_toast_2, Toast.LENGTH_LONG).show();
             return;
@@ -299,6 +299,8 @@ public class AidlUtil {
         printBitmaps(AidlUtil.createNum(period, number));
         woyouService.lineWrap(1, null);
         woyouService.printTextWithFont("挂号医生: " + doctorName + "\n", null, 26, null);
+        String waits = String.format("前面还有%s人在等待", wait);
+        woyouService.printTextWithFont(waits + "\n", null, 26, null);
         woyouService.printTextWithFont("--------------------------------------\n", null, 20, null);
         woyouService.setAlignment(0, null);
         woyouService.printTextWithFont(" 温馨提示\n", null, 26, null);

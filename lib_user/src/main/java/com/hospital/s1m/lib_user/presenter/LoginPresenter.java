@@ -1,6 +1,7 @@
 package com.hospital.s1m.lib_user.presenter;
 
 import android.content.Context;
+import android.text.TextUtils;
 
 import com.alibaba.fastjson.JSON;
 import com.hospital.s1m.lib_base.contract.MainContract;
@@ -61,10 +62,13 @@ public class LoginPresenter {
             }
 
             @Override
-            public void onFailed(String errorCode, String errorInfo) {
+            public void onFailed(String errorCode, String errorInfo, String type) {
                 if (mLoginView != null) {
                     System.out.println(errorCode + "信息" + errorInfo);
-                    ToastUtils.showToast(mContext, "" + CodeUtils.setCode(errorCode));
+                    String info = CodeUtils.setCode(errorCode, errorInfo);
+                    if (!TextUtils.isEmpty(info)) {
+                        ToastUtils.showToast(mContext, "" + CodeUtils.setCode(errorCode, errorInfo));
+                    }
                     mLoginView.hideLoading();
                 }
             }

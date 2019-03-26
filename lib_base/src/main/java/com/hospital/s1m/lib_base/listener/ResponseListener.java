@@ -12,5 +12,5 @@ public interface ResponseListener<T> {
 
     void onSuccess(T result);
 
-    void onFailed(String errorCode, String errorInfo);
+    void onFailed(String errorCode, String errorInfo, String type);
 }

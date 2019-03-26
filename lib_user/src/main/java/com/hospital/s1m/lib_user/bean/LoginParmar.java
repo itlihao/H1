@@ -173,6 +173,7 @@ public class LoginParmar {
             DeviceBean deviceInfoDTO = new DeviceBean();
             deviceInfoDTO.setDeviceName(android.os.Build.MODEL);
             deviceInfoDTO.setDeviceType(DeviceInfoUtils.isSunMiT() ? "1" : "3");
+            deviceInfoDTO.setDeviceNo(DeviceInfoUtils.getDeviceSN());
             deviceInfoDTO.setBranch(android.os.Build.MODEL);
             deviceInfoDTO.setBrand(android.os.Build.MANUFACTURER);
             deviceInfoDTO.setClientMac("");

@@ -9,6 +9,7 @@ public class Body<T> {
     private Object code;
     private T param;
     private String content;
+    private String periodType;
 
     public String getSynCode() {
         return synCode;
@@ -40,5 +41,13 @@ public class Body<T> {
 
     public void setContent(String content) {
         this.content = content;
+    }
+
+    public String getPeriodType() {
+        return periodType;
+    }
+
+    public void setPeriodType(String periodType) {
+        this.periodType = periodType;
     }
 }

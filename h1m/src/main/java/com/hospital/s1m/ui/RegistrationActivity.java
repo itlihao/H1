@@ -30,6 +30,7 @@ import com.hospital.s1m.lib_base.presenter.RegistrationPresenter;
 import com.hospital.s1m.lib_base.utils.LiveDataBus;
 import com.hospital.s1m.lib_base.utils.Logger;
 import com.hospital.s1m.lib_base.utils.ToastUtils;
+import com.hospital.s1m.lib_base.utils.Utils;
 import com.hospital.s1m.lib_base.view.MDDialog;
 
 import java.util.ArrayList;
@@ -46,7 +47,8 @@ public class RegistrationActivity extends BaseActivity implements View.OnClickLi
     private RegistrationPresenter mPresenter;
 
     private String sysUserId;
-    private String next = null;
+    private String periodType = null;
+    private boolean isRegistration = false;
     private DoctorSelectorItemListAdapter doctorAdapter;
 
     private MDDialog mDialog;
@@ -160,7 +162,11 @@ public class RegistrationActivity extends BaseActivity implements View.OnClickLi
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.select_doctor:
-                mPresenter.quickRegistration(CacheDataSource.getClinicId(), sysUserId, next);
+
+                if (!Utils.isFastClick() && !isRegistration) {
+                    isRegistration = true;
+                    mPresenter.quickRegistration(CacheDataSource.getClinicId(), sysUserId, periodType);
+                }
                 break;
             default:
                 break;
@@ -172,7 +178,8 @@ public class RegistrationActivity extends BaseActivity implements View.OnClickLi
     public void onQuickRegistration(RegistrCall quickRegistr) {
         mPresenter.getDoctorInfo(CacheDataSource.getClinicId(), 1);
         sysUserId = "";
-        next = null;
+        periodType = null;
+        isRegistration = false;
 
         boolean print = (boolean) SPDataSource.get(this, "needPrint", true);
         if (print) {
@@ -200,6 +207,7 @@ public class RegistrationActivity extends BaseActivity implements View.OnClickLi
                     .addParam("timeS1", s1)
                     .addParam("timeS2", s2)
                     .addParam("timeS3", s3)
+                    .addParam("wait", quickRegistr.getWaitNum())
                     .build()
                     .callAsyncCallbackOnMainThread((cc, result) -> {
                         if (result.isSuccess()) {
@@ -239,7 +247,7 @@ public class RegistrationActivity extends BaseActivity implements View.OnClickLi
     }
 
     @Override
-    public void onPeriodFullResult(String result) {
+    public void onPeriodFullResult(String result, String type) {
         mFullDialog = new MDDialog.Builder(this)
                 .setShowTitle(false)
                 .setShowMessage(true)
@@ -251,11 +259,23 @@ public class RegistrationActivity extends BaseActivity implements View.OnClickLi
                 .setCancelable(false)
                 .setPositiveButton(v -> {
                     // TODO 继续挂号
-                    next = "confirm";
-                    mPresenter.quickRegistration(CacheDataSource.getClinicId(), sysUserId, next);
+                    periodType = type;
+                    mPresenter.quickRegistration(CacheDataSource.getClinicId(), sysUserId, periodType);
                 })
-                .setNegativeButton(v -> mFullDialog.dismiss())
+                .setNegativeButton(v -> {
+                    mFullDialog.dismiss();
+                    sysUserId = "";
+                    periodType = null;
+                    isRegistration = false;
+                })
                 .create();
         mFullDialog.show();
+    }
+
+    @Override
+    public void onFailed() {
+        sysUserId = "";
+        periodType = null;
+        isRegistration = false;
     }
 }

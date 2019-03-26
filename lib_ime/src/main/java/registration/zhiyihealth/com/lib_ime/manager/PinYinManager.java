@@ -733,7 +733,7 @@ public class PinYinManager {
         }*/ else if (keyCode == KeyEvent.KEYCODE_DPAD_CENTER || keyCode == KeyEvent.KEYCODE_SPACE) {
             // 选择候选词
             chooseCandidate(-1);
-        } else if (keyCode >= KeyEvent.KEYCODE_1 && keyCode <= KeyEvent.KEYCODE_9) {
+        } else if (keyCode >= KeyEvent.KEYCODE_0 && keyCode <= KeyEvent.KEYCODE_9) {
             String result = String.valueOf((char) keyChar);
             commitResultText(result);
         }

@@ -11,6 +11,7 @@ import com.hospital.s1m.lib_base.entity.Patient;
 import com.hospital.s1m.lib_base.entity.PatientAndRegistrationParmar;
 import com.hospital.s1m.lib_base.entity.RegistrCall;
 import com.hospital.s1m.lib_base.listener.ResponseListener;
+import com.hospital.s1m.lib_base.utils.DeviceInfoUtils;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -28,10 +29,11 @@ public class RegistrationModel {
      */
     public void quickRegistration(Context context, String clinicId, String sysUserId, String next, ResponseListener<RegistrCall> listener) {
         CacheDataSource.setBaseUrl(Urls.workbench);
-        HashMap<String, String> clinic = new HashMap<>(3);
+        HashMap<String, String> clinic = new HashMap<>(4);
         clinic.put("clinicId", clinicId);
+        clinic.put("deviceNo", DeviceInfoUtils.getDeviceSN());
         if (next != null) {
-            clinic.put("next", next);
+            clinic.put("periodType", next);
         }
         if (!TextUtils.isEmpty(sysUserId)) {
             clinic.put("sysUserId", sysUserId);

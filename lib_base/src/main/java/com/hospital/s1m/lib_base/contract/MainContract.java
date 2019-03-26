@@ -44,6 +44,8 @@ public interface MainContract {
         /**
          * 医生该时段内已约满
          */
-        void onPeriodFullResult(String result);
+        void onPeriodFullResult(String result, String type);
+
+        void onFailed();
     }
 }

@@ -26,6 +26,7 @@ public class RegistrCall {
     private String registrationId;
     private String sysUserId;
     private List<TimeTableBean> timeTable;
+    private String waitNum;
 
     public String getDoctorName() {
         return doctorName;
@@ -73,6 +74,14 @@ public class RegistrCall {
 
     public void setTimeTable(List<TimeTableBean> timeTable) {
         this.timeTable = timeTable;
+    }
+
+    public String getWaitNum() {
+        return waitNum;
+    }
+
+    public void setWaitNum(String waitNum) {
+        this.waitNum = waitNum;
     }
 
     public static class TimeTableBean {

@@ -48,6 +48,8 @@ public class ComponentUser implements IComponent {
             intent = new Intent(context, LoginActivity.class);
         } else if (DeviceInfoUtils.isSunMiPos()){
             intent = new Intent(context, LoginMActivity.class);
+        } else if (DeviceInfoUtils.isSunMiT()) {
+            intent = new Intent(context, LoginActivity.class);
         }
 
         if (!(context instanceof Activity)) {
