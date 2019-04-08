@@ -56,7 +56,7 @@ public class RegistrationPresenter {
         mModel.quickRegistration(mContext, clinicId, sysUserId, next, new ResponseListener<RegistrCall>() {
             @Override
             public RegistrCall convert(String jsonStr) {
-                mView.hideLoading();
+//                mView.hideLoading();
                 return JSON.parseObject(jsonStr, RegistrCall.class);
             }
 
@@ -207,6 +207,7 @@ public class RegistrationPresenter {
                     if (!TextUtils.isEmpty(info)) {
                         ToastUtils.showToast(mContext, "" + CodeUtils.setCode(errorCode, errorInfo));
                     }
+                    mView.onDoctorResult(null);
                     mView.hideLoading();
                 }
             }

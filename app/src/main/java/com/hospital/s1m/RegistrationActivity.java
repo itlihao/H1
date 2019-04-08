@@ -65,7 +65,7 @@ public class RegistrationActivity extends BaseActivity implements View.OnClickLi
     private DrawerLayout mDrawerLayout;
 
     private RecyclerView doctorView;
-    private MDDialog mDialog;
+//    private MDDialog mDialog;
     private MDDialog mFullDialog;
 
     private TextView mToast;
@@ -99,6 +99,7 @@ public class RegistrationActivity extends BaseActivity implements View.OnClickLi
                         mDialog.dismiss();
                         mDialog = null;
                     }
+                    isRegistration = false;
                     break;
                 default:
                     break;
@@ -260,10 +261,11 @@ public class RegistrationActivity extends BaseActivity implements View.OnClickLi
         doctorAdapter.setOnItemClickListener((adapter, view, position) -> {
             DoctorInfoCheck infoCheck = (DoctorInfoCheck) adapter.getItem(position);
             assert infoCheck != null;
-            sysUserId = infoCheck.getDoctorId();
+
             if (infoCheck.isFulled()) {
                 return;
             }
+            sysUserId = infoCheck.getDoctorId();
             setCheck(adapter, position);
         });
     }
@@ -331,9 +333,12 @@ public class RegistrationActivity extends BaseActivity implements View.OnClickLi
                         .callAsyncCallbackOnMainThread(fragmentdrawer);
                 break;
             case R.id.btn_getNum:
+                Logger.w("Registration", "isRegistration: " + isRegistration);
                 if (!Utils.isFastClick() && !isRegistration) {
                     isRegistration = true;
                     mPresenter.quickRegistration(CacheDataSource.getClinicId(), sysUserId, periodType);
+                } else {
+                    ToastUtils.showToast(this, "请勿重复点击");
                 }
                 break;
             case R.id.tv_net_state:
@@ -376,7 +381,6 @@ public class RegistrationActivity extends BaseActivity implements View.OnClickLi
         mPresenter.getDoctorInfo(CacheDataSource.getClinicId(), 1);
         sysUserId = "";
         periodType = null;
-        isRegistration = false;
 
         boolean print = (boolean) SPDataSource.get(this, "needPrint", true);
         if (print) {
@@ -407,15 +411,13 @@ public class RegistrationActivity extends BaseActivity implements View.OnClickLi
                     .addParam("wait", quickRegistr.getWaitNum())
                     .build()
                     .callAsyncCallbackOnMainThread((cc, result) -> {
-                        if (result.isSuccess()) {
-                            hideLoading();
-                        }
+                        hideLoading();
                     });
         } else {
-            mDialog = new MDDialog.Builder(this)
+            mDialog = new MDDialog.Builder(RegistrationActivity.this)
                     .setShowTitle(false)
                     .setShowMessage(true)
-                    .setMessages(Objects.requireNonNull(this).getString(com.hospital.s1m.lib_user.R.string.sr_registration_suc))
+                    .setMessages(Objects.requireNonNull(RegistrationActivity.this).getString(com.hospital.s1m.lib_user.R.string.sr_registration_suc))
                     .setShowAvi(false)
                     .setshowRNo(true)
                     .setRNo(String.format("%03d", quickRegistr.getRegistrationNo()) + "号")
@@ -433,8 +435,10 @@ public class RegistrationActivity extends BaseActivity implements View.OnClickLi
     @Override
     public void onDoctorResult(ArrayList<DoctorInfo> result) {
         mSwiperefreshlayout.setRefreshing(false);
-        initData();
-        initAdapter();
+        if (result != null) {
+            initData();
+            initAdapter();
+        }
 
         hideLoading();
 
