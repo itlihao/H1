@@ -427,7 +427,7 @@ public class AidlUtil {
         //获取文字的字宽高，以便将文字与图片中心对齐
         String s1 = " • 请您按照号码等待叫号就诊\n";
         String s2 = " • 过号请主动与医生护士联系\n";
-        String titl = " • 出诊时间：";
+        String titl = " • 营业时间：";
         paint.getTextBounds(titl, 0, titl.length(), bounds);
         int tHeight = bounds.height();
         int tWidth = bounds.width();

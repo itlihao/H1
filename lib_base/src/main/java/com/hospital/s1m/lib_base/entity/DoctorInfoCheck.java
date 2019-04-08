@@ -73,7 +73,7 @@ public class DoctorInfoCheck extends DoctorInfo {
                 check.setRealName(infos.get(i).getRealName());
                 check.setDoctorId(infos.get(i).getDoctorId());
                 check.setSex(infos.get(i).getSex());
-                check.setWaitNum(infos.get(i).getWaitNum() + 1);
+                check.setWaitNum(infos.get(i).getWaitNum());
                 check.setFirstRegi(infos.get(i).getFirstRegi());
                 check.setCheck(false);
                 result.add(check);

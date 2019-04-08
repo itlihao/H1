@@ -64,16 +64,6 @@ public class LoginModel {
         }
     }
 
-    /**
-     * 获取医生列表
-     */
-    public void getEmployList(Context context, String clinicId, ResponseListener<ArrayList<DoctorInfo>> listener) {
-        CacheDataSource.setBaseUrl(Urls.workbench);
-        HashMap<String, String> clinic = new HashMap<>(5);
-        clinic.put("clinicId", clinicId);
-        NetDataSource.postNoHeader(context, Urls.GET_EMPLOY_LIST, clinic, listener);
-    }
-
     public LoginParmar getInitData(Context mContext) {
         String username = (String) SPDataSource.get(mContext, USERNAME, "");
         String password = (String) SPDataSource.get(mContext, PASSWORD, "");

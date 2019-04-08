@@ -73,7 +73,7 @@ public class NetDataSource {
      * @param logSwitch   LOG开关
      * @param logTag      LOG标签
      */
-    public static void init(Application application, boolean logSwitch, String logTag) {
+    public static <T> void init(Application application, boolean logSwitch, String logTag) {
         OkHttpClient.Builder builder = new OkHttpClient.Builder();
 
         if (logSwitch) {

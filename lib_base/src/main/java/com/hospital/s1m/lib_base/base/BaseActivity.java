@@ -23,9 +23,9 @@ import java.util.Objects;
  * Email heaolihao@163.com
  */
 public abstract class BaseActivity extends RxAppCompatActivity implements NetBroadcastReceiver.NetChangeListener {
-    private MDDialog mDialog;
+    public MDDialog mDialog;
 
-    private MDDialog.Builder builder;
+    public MDDialog.Builder builder;
 
     public static NetBroadcastReceiver.NetChangeListener listener;
 
@@ -125,6 +125,9 @@ public abstract class BaseActivity extends RxAppCompatActivity implements NetBro
 
 
     public void showLoading(String msg) {
+        if (mDialog != null) {
+            return;
+        }
         builder.setMessages(msg);
         mDialog = builder.create();
         Objects.requireNonNull(mDialog.getWindow()).setType(type);
