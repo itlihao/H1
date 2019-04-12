@@ -99,7 +99,6 @@ public class RegistrationActivity extends BaseActivity implements View.OnClickLi
                         mDialog.dismiss();
                         mDialog = null;
                     }
-                    isRegistration = false;
                     break;
                 default:
                     break;
@@ -192,21 +191,13 @@ public class RegistrationActivity extends BaseActivity implements View.OnClickLi
         mDoctorList = DoctorInfoCheck.transformationNoCheck(CacheDataSource.getClinicDoctorInfo());
 
         List<DoctorInfoCheck> list = new ArrayList<>(mDoctorList);
-        filter(list, new Filter<DoctorInfoCheck>() {
-            @Override
-            public boolean isUnFirstRegi(DoctorInfoCheck t) {
-                if (t.isUnFirstRegi() || t.isFulled()) {
-                    return true;
-                }
-                return false;
+        filter(list, t -> {
+            if (t.isUnFirstRegi() || t.isFulled()) {
+                return true;
             }
+            return false;
         });
 
-        /*if (mDoctorList.size() < 1) {
-            mBtnGet.setClickable(false);
-        } else {
-            mBtnGet.setClickable(true);
-        }*/
         if (list.size() ==0 || mDoctorList.size() == 0) {
             mToast.setText("医生号源已约满，请用致医云诊室+小程序预约近期号源");
             mBtnGet.setClickable(false);
@@ -242,7 +233,7 @@ public class RegistrationActivity extends BaseActivity implements View.OnClickLi
         }
     }
 
-    public void filter(Collection<DoctorInfoCheck> collection, Filter<DoctorInfoCheck> filter) {
+    public void filter(Collection<DoctorInfoCheck> collection, Filter filter) {
         for (Iterator<DoctorInfoCheck> iterator = collection.iterator(); iterator.hasNext();) {
             DoctorInfoCheck infoCheck = iterator.next();
             if (filter.isUnFirstRegi(infoCheck)) {
@@ -251,7 +242,7 @@ public class RegistrationActivity extends BaseActivity implements View.OnClickLi
         }
     }
 
-    interface Filter<DoctorInfoCheck> {
+    interface Filter {
          boolean isUnFirstRegi(com.hospital.s1m.lib_base.entity.DoctorInfoCheck t);
     }
 
@@ -410,9 +401,7 @@ public class RegistrationActivity extends BaseActivity implements View.OnClickLi
                     .addParam("timeS3", s3)
                     .addParam("wait", quickRegistr.getWaitNum())
                     .build()
-                    .callAsyncCallbackOnMainThread((cc, result) -> {
-                        hideLoading();
-                    });
+                    .callAsyncCallbackOnMainThread((cc, result) -> hideLoading());
         } else {
             mDialog = new MDDialog.Builder(RegistrationActivity.this)
                     .setShowTitle(false)
@@ -429,6 +418,7 @@ public class RegistrationActivity extends BaseActivity implements View.OnClickLi
             mDialog.show();
             mhandler.sendEmptyMessageDelayed(1, 1500);
         }
+        mhandler.postDelayed(() -> isRegistration = false, 1550);
 
     }
 
@@ -478,6 +468,7 @@ public class RegistrationActivity extends BaseActivity implements View.OnClickLi
 
     @Override
     public void onFailed() {
+        mPresenter.getDoctorInfo(CacheDataSource.getClinicId(), 1);
         sysUserId = "";
         periodType = null;
         isRegistration = false;

@@ -11,7 +11,7 @@ android {
         applicationId "com.hospital.s1m"
         minSdkVersion rootProject.minVersion
         targetSdkVersion rootProject.targetVersion
-        versionCode 17
+        versionCode 18
         versionName "1.0.1"
 
         ndk {

@@ -64,7 +64,11 @@ public class DoctorItemAdapter extends BaseQuickAdapter<DoctorInfoCheck, BaseVie
             }
         }
 
-        helper.setText(R.id.tv_doctor_name, item.getRealName());
+        String name = item.getRealName();
+        if (name.length() > 4) {
+            name = item.getRealName().substring(0,4) + "...";
+        }
+        helper.setText(R.id.tv_doctor_name, name);
         if ("1".equals(item.getSex())) {
             helper.setImageResource(R.id.iv_doctor, R.drawable.ic_head_man);
 
