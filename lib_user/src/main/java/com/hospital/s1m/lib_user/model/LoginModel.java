@@ -6,13 +6,9 @@ import com.hospital.s1m.lib_base.constants.Urls;
 import com.hospital.s1m.lib_base.data.CacheDataSource;
 import com.hospital.s1m.lib_base.data.NetDataSource;
 import com.hospital.s1m.lib_base.data.SPDataSource;
-import com.hospital.s1m.lib_base.entity.DoctorInfo;
 import com.hospital.s1m.lib_base.entity.LoginContent;
 import com.hospital.s1m.lib_base.listener.ResponseListener;
 import com.hospital.s1m.lib_user.bean.LoginParmar;
-
-import java.util.ArrayList;
-import java.util.HashMap;
 
 /**
  * @author Lihao
@@ -29,8 +25,8 @@ public class LoginModel {
      * 登录
      */
     public void login(Context context, LoginParmar parmar, ResponseListener<LoginContent> listener) {
-        CacheDataSource.setBaseUrl(Urls.workbench);
-        NetDataSource.post(context, Urls.login, parmar, listener);
+        CacheDataSource.setBaseUrl(Urls.WORKBENCH);
+        NetDataSource.post(context, Urls.LOGIN, parmar, listener);
     }
 
     /**
@@ -43,7 +39,7 @@ public class LoginModel {
         CacheDataSource.setClinicName(loginContent.getClinicName());
         SPDataSource.put(context, CLINIC, loginContent.getClinicName());
         CacheDataSource.setUserType(loginContent.getUserType());
-        CacheDataSource.setUserToken(loginContent.getUserToken());
+//        CacheDataSource.setUserToken(loginContent.getUserToken());
     }
 
     /**

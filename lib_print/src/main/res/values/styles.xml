@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+
+    <!-- 文字在线性布局中的显示样式(黑色) -->
+    <style name="text_show_black">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textColor">@color/dialog_black</item>
+        <item name="android:padding">7.2dp</item>
+        <item name="android:textSize">14.5sp</item>
+    </style>
+
+    <!-- 文字在线性布局中的显示样式(黑色)36号字 -->
+    <style name="text_show_black_36_p1">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textColor">@color/dialog_black</item>
+        <item name="android:padding">2.4dp</item>
+        <item name="android:textSize">18sp</item>
+    </style>
+
+    <!-- 横向水平的线 灰线 -->
+    <style name="line_view_stylee_horizontal_fill_gray">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">1px</item>
+        <item name="android:background">@color/textchufangqian</item>
+    </style>
+</resources>

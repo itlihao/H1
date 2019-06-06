@@ -121,7 +121,7 @@ public class DeviceInfoUtils {
      */
     public static boolean isSunMiT() {
         Log.w("Utils", Build.MANUFACTURER + " , " + Build.MODEL);
-        return Build.MANUFACTURER != null && Build.MANUFACTURER.equals("SUNMI") && (Build.MODEL.contains("t1host"));
+        return Build.MANUFACTURER != null && Build.MANUFACTURER.equals("SUNMI") && (Build.MODEL.contains("t1host") || Build.MODEL.contains("T2"));
     }
 
     public static boolean isSunMiPos() {
@@ -130,6 +130,10 @@ public class DeviceInfoUtils {
 
     public static boolean isSunMiT1mini() {
         return Build.MANUFACTURER != null && Build.MANUFACTURER.equals("SUNMI") && (Build.MODEL.contains("T1mini"));
+    }
+
+    public static boolean isSunMiD1() {
+        return Build.MANUFACTURER != null && Build.MANUFACTURER.equals("SUNMI") && (Build.MODEL.contains("D1s"));
     }
 
     /**

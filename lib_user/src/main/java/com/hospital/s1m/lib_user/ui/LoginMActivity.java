@@ -3,7 +3,7 @@ package com.hospital.s1m.lib_user.ui;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.widget.AppCompatCheckBox;
+import androidx.appcompat.widget.AppCompatCheckBox;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
@@ -20,7 +20,9 @@ import com.hospital.s1m.lib_user.R;
 import com.hospital.s1m.lib_user.bean.LoginParmar;
 import com.hospital.s1m.lib_user.model.LoginModel;
 import com.hospital.s1m.lib_user.presenter.LoginPresenter;
+import com.jakewharton.rxbinding2.view.RxView;
 
+import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -46,6 +48,7 @@ public class LoginMActivity extends BaseActivity implements View.OnClickListener
         initData();
     }
 
+    @SuppressLint("CheckResult")
     private void initView() {
         mUserTel = findViewById(R.id.et_login_username);
         mUserPwd = findViewById(R.id.et_login_password);
@@ -53,8 +56,10 @@ public class LoginMActivity extends BaseActivity implements View.OnClickListener
         TextView mForgetPwd = findViewById(R.id.forget_pwd);
         Button mBtnLogin = findViewById(R.id.btn_login);
 
-        mForgetPwd.setOnClickListener(this);
         mBtnLogin.setOnClickListener(this);
+        RxView.clicks(mBtnLogin)
+                .throttleFirst(2, TimeUnit.SECONDS)
+                .subscribe(o -> doLogin());
     }
 
     @SuppressLint("SetTextI18n")
@@ -84,18 +89,22 @@ public class LoginMActivity extends BaseActivity implements View.OnClickListener
             Intent intent = new Intent(LoginMActivity.this, FindActivity.class);
             startActivity(intent);
         } else if (id == R.id.btn_login) {
-            String phone = mUserTel.getText().toString().trim();
-            String pwd = mUserPwd.getText().toString().trim();
-            if (TextUtils.isEmpty(phone)) {
-                ToastUtils.showToast(this, R.string.toast_input_phone);
-            } else if (TextUtils.isEmpty(pwd)) {
-                ToastUtils.showToast(this, R.string.toast_input_pwd);
-            } else if (!isPhoneNum(phone)) {
-                ToastUtils.showToast(this, R.string.toast_input_phone_err);
-            } else {
-                LoginParmar parmar = new LoginParmar(this, phone, pwd, mRememberPwd.isChecked());
-                mPresenter.doLogin(parmar);
-            }
+            doLogin();
+        }
+    }
+
+    private void doLogin() {
+        String phone = mUserTel.getText().toString().trim();
+        String pwd = mUserPwd.getText().toString().trim();
+        if (TextUtils.isEmpty(phone)) {
+            ToastUtils.showToast(this, R.string.toast_input_phone);
+        } else if (TextUtils.isEmpty(pwd)) {
+            ToastUtils.showToast(this, R.string.toast_input_pwd);
+        } else if (!isPhoneNum(phone)) {
+            ToastUtils.showToast(this, R.string.toast_input_phone_err);
+        } else {
+            LoginParmar parmar = new LoginParmar(this, phone, pwd, mRememberPwd.isChecked());
+            mPresenter.doLogin(parmar);
         }
     }
 

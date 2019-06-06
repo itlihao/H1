@@ -1,16 +1,15 @@
 package com.hospital.s1m.lib_base.base;
 
 import android.annotation.SuppressLint;
-import android.arch.lifecycle.Observer;
+import androidx.lifecycle.Observer;
 import android.content.IntentFilter;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 import android.view.View;
 import android.view.WindowManager;
 
 import com.trello.rxlifecycle2.components.support.RxAppCompatActivity;
-import com.hospital.s1m.lib_base.utils.LiveDataBus;
 import com.hospital.s1m.lib_base.utils.Logger;
 import com.hospital.s1m.lib_base.utils.NetworkUtils;
 import com.hospital.s1m.lib_base.view.MDDialog;
@@ -28,6 +27,8 @@ public abstract class BaseActivity extends RxAppCompatActivity implements NetBro
     public MDDialog.Builder builder;
 
     public static NetBroadcastReceiver.NetChangeListener listener;
+
+    NetBroadcastReceiver netBroadcastReceiver;
 
     /**
      * 网络类型
@@ -73,12 +74,20 @@ public abstract class BaseActivity extends RxAppCompatActivity implements NetBro
             //实例化IntentFilter对象
             IntentFilter filter = new IntentFilter();
             filter.addAction("android.net.conn.CONNECTIVITY_CHANGE");
-            NetBroadcastReceiver netBroadcastReceiver = new NetBroadcastReceiver();
+            netBroadcastReceiver = new NetBroadcastReceiver();
             //注册广播接收
             registerReceiver(netBroadcastReceiver, filter);
         }
 
 
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (netBroadcastReceiver != null) {
+            unregisterReceiver(netBroadcastReceiver);
+        }
     }
 
     /**

@@ -1,9 +1,14 @@
 package com.hospital.s1m;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
+import android.os.Handler;
 import android.util.Log;
 
+import androidx.multidex.MultiDex;
+
 import com.billy.cc.core.component.CC;
+import com.hospital.s1m.lib_base.utils.Density;
 import com.hospital.s1m.lib_print.utils.AidlUtil;
 import com.tencent.bugly.Bugly;
 import com.tencent.bugly.beta.Beta;
@@ -27,11 +32,17 @@ import registration.zhiyihealth.com.lib_ime.manager.PinYinManager;
  */
 public class MyApplication extends BaseApplication {
     private PinYinManager manager;
+    // 获取到主线程的handler
+    private static Handler mMainThreadHanler;
+
     @Override
     public void onCreate() {
         super.onCreate();
 
         NetDataSource.init(this, BuildConfig.DEBUG, "MyApplication");
+        Density.setDensity(this, 1366);
+
+        mMainThreadHanler = new Handler();
         // bugly升级配置
         Beta.strToastYourAreTheLatestVersion = "";
         Beta.strToastCheckingUpgrade = "";
@@ -63,6 +74,10 @@ public class MyApplication extends BaseApplication {
         manager.initialize(this);
     }
 
+    public static Handler getMainThreadHandler() {
+        return mMainThreadHanler;
+    }
+
     @SuppressLint("SimpleDateFormat")
     private void getNetTime() {
         URL url = null;//取得资源对象
@@ -82,5 +97,11 @@ public class MyApplication extends BaseApplication {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    @Override
+    protected void attachBaseContext(Context base) {
+        super.attachBaseContext(base);
+        MultiDex.install(this);
     }
 }

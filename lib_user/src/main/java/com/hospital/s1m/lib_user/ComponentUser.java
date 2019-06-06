@@ -43,8 +43,8 @@ public class ComponentUser implements IComponent {
 
     private void todoLogin(CC cc) {
         Context context = cc.getContext();
-        Intent intent = new Intent(context, LoginMActivity.class);
-        if (DeviceInfoUtils.isSunMiT1mini()) {
+        Intent intent = new Intent(context, LoginActivity.class);
+        if (DeviceInfoUtils.isSunMiT1mini() || DeviceInfoUtils.isSunMiD1()) {
             intent = new Intent(context, LoginActivity.class);
         } else if (DeviceInfoUtils.isSunMiPos()){
             intent = new Intent(context, LoginMActivity.class);

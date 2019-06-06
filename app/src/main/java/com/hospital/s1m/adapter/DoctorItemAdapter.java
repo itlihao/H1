@@ -1,12 +1,13 @@
 package com.hospital.s1m.adapter;
 
 import android.content.Context;
-import android.support.v4.content.ContextCompat;
+import androidx.core.content.ContextCompat;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.hospital.s1m.R;
 import com.hospital.s1m.lib_base.entity.DoctorInfoCheck;
+import com.hospital.s1m.lib_base.listener.CallInterface;
 
 import java.util.ArrayList;
 
@@ -17,24 +18,17 @@ import java.util.ArrayList;
  */
 public class DoctorItemAdapter extends BaseQuickAdapter<DoctorInfoCheck, BaseViewHolder> {
 
-    private int preCheck = -1;
-
     private Context mContext;
 
-    public int getPreCheck() {
-        return preCheck;
-    }
+    private CallInterface callInterface;
 
-    public void setPreCheck(int preCheck) {
-        this.preCheck = preCheck;
+    public void setCallInterface(CallInterface callInterface) {
+        this.callInterface = callInterface;
     }
 
     public DoctorItemAdapter(Context context, int layoutResId, ArrayList<DoctorInfoCheck> data) {
         super(layoutResId, data);
         mContext = context;
-        if (data.size() == 1 && !data.get(0).isFulled()) {
-            data.get(0).setCheck(true);
-        }
     }
 
     @Override
@@ -50,23 +44,17 @@ public class DoctorItemAdapter extends BaseQuickAdapter<DoctorInfoCheck, BaseVie
             helper.setTextColor(R.id.tv_doctor_name, ContextCompat.getColor(mContext, R.color.color_C5));
             helper.setTextColor(R.id.tv_doctor_sex, ContextCompat.getColor(mContext, R.color.color_C5));
             helper.setTextColor(R.id.tv_list_num, ContextCompat.getColor(mContext, R.color.color_C5));
-            helper.setImageResource(R.id.item_radio, R.drawable.radio_fulled);
             helper.setVisible(R.id.iv_label, true);
+            helper.setAlpha(R.id.btn_getNum, (float) 0.5);
+        } else {
+            helper.setAlpha(R.id.btn_getNum, (float) 1.0);
         }
 
-        if (item.isCheck()) {
-            helper.setBackgroundRes(R.id.rl_solid, R.drawable.card_choose_shape);
-            helper.setImageResource(R.id.item_radio, R.drawable.radio_checked);
-        } else {
-            helper.setBackgroundRes(R.id.rl_solid, R.drawable.card_unchoose_shape);
-            if (!item.isFulled()) {
-                helper.setImageResource(R.id.item_radio, R.drawable.radio_unchecked);
-            }
-        }
+        helper.setOnClickListener(R.id.btn_getNum, v -> callInterface.getNum(item.getDoctorId(), item.isFulled()));
 
         String name = item.getRealName();
         if (name.length() > 4) {
-            name = item.getRealName().substring(0,4) + "...";
+            name = item.getRealName().substring(0, 4) + "...";
         }
         helper.setText(R.id.tv_doctor_name, name);
         if ("1".equals(item.getSex())) {
@@ -75,7 +63,6 @@ public class DoctorItemAdapter extends BaseQuickAdapter<DoctorInfoCheck, BaseVie
         } else {
             helper.setImageResource(R.id.iv_doctor, R.drawable.ic_head_women);
         }
-//        helper.setChecked(R.id.item_radio, item.isCheck());
 
         helper.setText(R.id.tv_list_num, item.getWaitNum() + "人排队中...");
     }

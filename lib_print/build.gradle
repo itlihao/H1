@@ -9,7 +9,7 @@ android {
         versionName "1.0"
     }
 
-    resourcePrefix "print_"
+//    resourcePrefix "print_"
 
     buildTypes {
         release {

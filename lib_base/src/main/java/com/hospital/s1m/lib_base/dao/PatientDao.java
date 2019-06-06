@@ -112,7 +112,7 @@ public class PatientDao {
                 patient.setPhone(cursor.getString(6));
                 patient.setBaseVersion(cursor.getString(7));
                 patients.add(patient);
-//                Logger.d("dao", patient.getUserName());
+//                Logger.d("dao", PATIENT.getUserName());
             }
         }
         assert cursor != null;

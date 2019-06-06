@@ -1,13 +1,13 @@
 package com.hospital.s1m.ui;
 
 import android.annotation.SuppressLint;
-import android.arch.lifecycle.Observer;
+import androidx.lifecycle.Observer;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.support.annotation.Nullable;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
+import androidx.annotation.Nullable;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import android.view.View;
 import android.widget.Button;
 
@@ -27,11 +27,13 @@ import com.hospital.s1m.lib_base.entity.Patient;
 import com.hospital.s1m.lib_base.entity.RegistrCall;
 import com.hospital.s1m.lib_base.model.RegistrationModel;
 import com.hospital.s1m.lib_base.presenter.RegistrationPresenter;
-import com.hospital.s1m.lib_base.utils.LiveDataBus;
 import com.hospital.s1m.lib_base.utils.Logger;
-import com.hospital.s1m.lib_base.utils.ToastUtils;
 import com.hospital.s1m.lib_base.utils.Utils;
 import com.hospital.s1m.lib_base.view.MDDialog;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -83,14 +85,7 @@ public class RegistrationActivity extends BaseActivity implements View.OnClickLi
         initData();
         initAdapter();
 
-        LiveDataBus.get().with("jpushMessage", String.class)
-                .observe(this, new Observer<String>() {
-                    @Override
-                    public void onChanged(@Nullable String info) {
-                        Logger.d("BaseActivity", "[JPushReceiver] 接收到推送下来的: " + info);
-                        mPresenter.getDoctorInfo(CacheDataSource.getClinicId(), 1);
-                    }
-                });
+        EventBus.getDefault().register(this);
     }
 
     @Override
@@ -99,6 +94,15 @@ public class RegistrationActivity extends BaseActivity implements View.OnClickLi
         /*if (mPresenter != null) {
             mPresenter.getDoctorInfo(CacheDataSource.getClinicId());
         }*/
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (EventBus.getDefault().isRegistered(this)) {
+            // 反注册EventBus
+            EventBus.getDefault().unregister(this);
+        }
     }
 
     @Override
@@ -171,6 +175,12 @@ public class RegistrationActivity extends BaseActivity implements View.OnClickLi
             default:
                 break;
         }
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void regChageEventBus(String msg) {
+        Logger.d("BaseActivity", "[JPushReceiver] 接收到推送下来的: " + msg);
+        mPresenter.getDoctorInfo(CacheDataSource.getClinicId(), 1);
     }
 
     @SuppressLint("DefaultLocale")

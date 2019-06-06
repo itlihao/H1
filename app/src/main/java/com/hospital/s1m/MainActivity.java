@@ -30,9 +30,9 @@ public class MainActivity extends BaseActivity {
     }
 
     private void initView() {
-        Bitmap bitmap = AidlUtil.createImage("https://www.baidu.com/");
+//        Bitmap bitmap = AidlUtil.createImage("https://www.baidu.com/");
 //        Bitmap bitmap = AidlUtil.createTime("上午 08:00-12:00", "下午 14:00-18:00", "晚上 19:00-21:00");
-//        Bitmap bitmap = AidlUtil.createNum("");
+        Bitmap bitmap = AidlUtil.createImg("");
         ImageView iv = findViewById(R.id.iv_test);
         iv.setImageBitmap(bitmap);
     }

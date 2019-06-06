@@ -4,7 +4,7 @@
     <color name="colorPrimaryDark">#147AE0</color>
     <color name="colorAccent">#147AE0</color>
 
-    <color name="color_main_back">#E2F1FF</color>
+    <color name="color_main_back">#F2F2F2</color>
 
     <color name="color_white">#FFFFFF</color>
     <color name="color_1A">#1A1A1A</color>
@@ -43,4 +43,11 @@
     <color name="user_FFFF00">#FFFF00</color>
     <color name="user_BDBDBD">#BDBDBD</color>
     <color name="user_FAFAFA">#FAFAFA</color>
+
+
+    <color name="trans">#00000000</color>
+    <color name="main_color">#51AFC9</color>
+    <color name="text_333">#1A1A1A</color>
+    <color name="textchufangqian">#D9D9D9</color>
+    <color name="dialog_black">#626262</color>
 </resources>

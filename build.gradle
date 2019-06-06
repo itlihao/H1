@@ -20,11 +20,14 @@ allprojects {
         google()
         jcenter()
         maven { url "https://jitpack.io" }
+        maven {
+            url = 'http://192.168.15.238:8081/nexus/content/groups/public/'
+        }
     }
 }
 
 ext {
-    compileVersion = 27
+    compileVersion = 28
     minVersion = 19
     targetVersion = 22
     supportVersion = '27.1.0'

@@ -1,14 +1,18 @@
 package com.hospital.s1m.lib_print;
 
-import android.graphics.Bitmap;
+import android.os.Handler;
 
 import com.billy.cc.core.component.CC;
 import com.billy.cc.core.component.CCResult;
 import com.billy.cc.core.component.IComponent;
-import com.hospital.s1m.lib_print.utils.AidlUtil;
-import com.hospital.s1m.lib_print.utils.QRCodeUtil;
 import com.hospital.s1m.lib_base.constants.Components;
+import com.hospital.s1m.lib_base.utils.DeviceInfoUtils;
+import com.hospital.s1m.lib_print.printUsb.PrintRegistration;
+import com.hospital.s1m.lib_print.utils.AidlUtil;
 
+/**
+ * @author Lihao
+ */
 public class ComponentPrint implements IComponent {
     @Override
     public String getName() {
@@ -19,9 +23,6 @@ public class ComponentPrint implements IComponent {
     public boolean onCall(CC cc) {
         String actionName = cc.getActionName();
         switch (actionName) {
-            /*case Components.ComponentPrintInit:
-                CC.sendCCResult(cc.getCallId(), CCResult.success("getApplogic", new ApplogicUser()));
-                break;*/
             case Components.ComponentPrintNumber:
                 int number = cc.getParamItem("number");
                 String doctorName = cc.getParamItem("doctorName");
@@ -33,40 +34,31 @@ public class ComponentPrint implements IComponent {
                 String timeh = cc.getParamItem("timeS2");
                 String timey = cc.getParamItem("timeS3");
                 String wait = cc.getParamItem("wait");
+                Handler mainThreadHandler = cc.getParamItem("mainThreadHandler");
 
                 try {
-                    //居中
-                    AidlUtil.getInstance().printNumber(cc.getContext(), number, doctorName, registrationId,
-                            sysUserId, periodType, registerType, timea, timeh, timey, wait);
-                    CC.sendCCResult(cc.getCallId(), CCResult.success());
+                    if (DeviceInfoUtils.isSunMiT1mini()) {
+                        AidlUtil.getInstance().printForm58(cc.getContext(), number, doctorName, registrationId,
+                                sysUserId, periodType, registerType, timea, timeh, timey, wait);
+                        CC.sendCCResult(cc.getCallId(), CCResult.success());
+                    } else if (DeviceInfoUtils.isSunMiD1()) {
+                        mainThreadHandler.post(() -> PrintRegistration.getInstance().initPrint(cc));
+                    } else {
+                        AidlUtil.getInstance().printForm80(cc.getContext(), number, doctorName, registrationId,
+                                periodType, registerType, timea, timeh, timey, wait);
+                        CC.sendCCResult(cc.getCallId(), CCResult.success());
+                    }
+
                 } catch (Exception e) {
                     CC.sendCCResult(cc.getCallId(), CCResult.error("打印失败"));
                     e.printStackTrace();
                 }
                 break;
-            case Components.ComponentPrintQr:
-                String data = cc.getParamItem("data");
-                String clinicName = cc.getParamItem("clinicName");
-                String doctorName1 = cc.getParamItem("doctorName");
-                try {
-                AidlUtil.getInstance().printQr(data, clinicName, doctorName1);
-                CC.sendCCResult(cc.getCallId(), CCResult.success());
-                } catch (Exception e) {
-                    // TODO Auto-generated catch block
-                    CC.sendCCResult(cc.getCallId(), CCResult.error("打印失败"));
-                    e.printStackTrace();
-                }
-                break;
-            case Components.ComponentGetQr:
-                String content = cc.getParamItem("content");
-                int widthPix = cc.getParamItem("widthPix");
-                int heightPix = cc.getParamItem("heightPix");
-                Bitmap logoBm = cc.getParamItem("logoBm");
-                Bitmap qrImage = QRCodeUtil.createQRImage(content, widthPix, heightPix, logoBm);
-                CC.sendCCResult(cc.getCallId(), CCResult.success("code", qrImage));
+            case "0":
                 break;
             default:
+                break;
         }
-        return true;
+        return false;
     }
 }

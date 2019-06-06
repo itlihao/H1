@@ -1,6 +1,9 @@
 package com.hospital.s1m.lib_base.converter;
 
+import android.text.TextUtils;
+
 import com.alibaba.fastjson.JSON;
+import com.hospital.s1m.lib_base.data.CacheDataSource;
 import com.hospital.s1m.lib_base.entity.HttpResult;
 import com.hospital.s1m.lib_base.listener.ResponseListener;
 import com.lzy.okgo.convert.Converter;
@@ -28,6 +31,13 @@ public class ObjectConverter<T> implements Converter<T> {
             return null;
         }
         HttpResult mHttpResult = JSON.parseObject(body.string(), HttpResult.class);
+        if (mHttpResult.getHeader() != null) {
+            String token = mHttpResult.getHeader().getUserToken();
+            if (token != null && !TextUtils.isEmpty(token)) {
+                CacheDataSource.setUserToken(token);
+            }
+        }
+
         String code = (String) mHttpResult.getBody().getCode();
         if (!"2000000".equals(code)) {
             Observable.empty()

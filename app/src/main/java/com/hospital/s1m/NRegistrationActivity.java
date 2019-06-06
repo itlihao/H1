@@ -1,21 +1,19 @@
 package com.hospital.s1m;
 
 import android.annotation.SuppressLint;
-import android.arch.lifecycle.Observer;
 import android.content.Context;
 import android.graphics.Color;
 import android.inputmethodservice.Keyboard;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
-import android.support.v4.widget.DrawerLayout;
-import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
+import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
+import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
@@ -24,12 +22,10 @@ import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
-import android.widget.PopupWindow;
 import android.widget.RadioGroup;
 
 import com.android.inputmethod.pinyin.SoftKey;
@@ -53,7 +49,6 @@ import com.hospital.s1m.lib_base.entity.PatientAndRegistrationParmar;
 import com.hospital.s1m.lib_base.entity.RegistrCall;
 import com.hospital.s1m.lib_base.model.RegistrationModel;
 import com.hospital.s1m.lib_base.presenter.RegistrationPresenter;
-import com.hospital.s1m.lib_base.utils.LiveDataBus;
 import com.hospital.s1m.lib_base.utils.Logger;
 import com.hospital.s1m.lib_base.utils.PhoneNumUtils;
 import com.hospital.s1m.lib_base.utils.PinyinUtils;
@@ -62,6 +57,13 @@ import com.hospital.s1m.lib_base.utils.UUID;
 import com.hospital.s1m.lib_base.utils.Utils;
 import com.hospital.s1m.lib_base.view.CustomPopWindow;
 import com.hospital.s1m.lib_base.view.MDDialog;
+import com.lonch.zyhealth.readcardlibrary.bean.CardInfo;
+import com.lonch.zyhealth.readcardlibrary.callback.IDCardInfoCallback;
+import com.lonch.zyhealth.readcardlibrary.readcardutils.ReadCardUtils;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -70,8 +72,13 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
+import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
 
+import io.reactivex.Observable;
+import io.reactivex.Observer;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
 import registration.zhiyihealth.com.lib_ime.listener.PinYinConnector;
 import registration.zhiyihealth.com.lib_ime.listener.SoftKeyListener;
 import registration.zhiyihealth.com.lib_ime.manager.PinYinManager;
@@ -98,6 +105,8 @@ public class NRegistrationActivity extends BaseActivity implements View.OnClickL
     private Button mCancel;
 
     private RecyclerView doctorView;
+
+    private BaseActivity mActivity;
 
     private SwipeRefreshLayout mSwiperefreshlayout;
 
@@ -131,6 +140,9 @@ public class NRegistrationActivity extends BaseActivity implements View.OnClickL
     private PatientItemListAdapter adapter;
     private RecyclerView patientList;
 
+    /*用于区分循环读取身份拿证信息，是否是同一张*/
+    private CardInfo tempCardInfo;
+
     @SuppressLint("HandlerLeak")
     private class MHandler extends Handler {
         @Override
@@ -143,6 +155,11 @@ public class NRegistrationActivity extends BaseActivity implements View.OnClickL
                     if (mDialog != null) {
                         mDialog.dismiss();
                         mDialog = null;
+                    }
+                    break;
+                case 3:
+                    if (tempCardInfo != null) {
+                        setData(tempCardInfo);
                     }
                     break;
                 default:
@@ -159,6 +176,8 @@ public class NRegistrationActivity extends BaseActivity implements View.OnClickL
         myDao = new PatientDao(this);
         mPresenter = new RegistrationPresenter(NRegistrationActivity.this, new RegistrationModel(), this);
         mPresenter.getDoctorInfo(CacheDataSource.getClinicId(), 0);
+        mActivity = this;
+
         String ver = myDao.getMaxVersion(CacheDataSource.getClinicId());
         if (TextUtils.isEmpty(ver)) {
             ver = "1111111111111";
@@ -175,14 +194,15 @@ public class NRegistrationActivity extends BaseActivity implements View.OnClickL
         initData();
         initAdapter();
 
-        LiveDataBus.get().with("jpushMessage", String.class)
+        /*LiveDataBus.get().with("jpushMessage", String.class)
                 .observe(this, new Observer<String>() {
                     @Override
                     public void onChanged(@Nullable String info) {
                         Logger.d("BaseActivity", "[JPushReceiver] 接收到推送下来的: " + info);
                         mPresenter.getDoctorInfo(CacheDataSource.getClinicId(), 1);
                     }
-                });
+                });*/
+        EventBus.getDefault().register(this);
         new ThreadGetPatient().start();
     }
 
@@ -193,8 +213,30 @@ public class NRegistrationActivity extends BaseActivity implements View.OnClickL
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        disableShowSoftInput();
+        startIDCardReader();
+        /*if (mPresenter != null) {
+            mPresenter.getDoctorInfo(CacheDataSource.getClinicId());
+        }*/
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+
+        ReadCardUtils.closeReadCard(this);
+    }
+
+    @Override
     protected void onDestroy() {
         super.onDestroy();
+        if (EventBus.getDefault().isRegistered(this)) {
+            // 反注册EventBus
+            EventBus.getDefault().unregister(this);
+        }
+        tempCardInfo = null;
     }
 
     @SuppressLint("ClickableViewAccessibility")
@@ -376,14 +418,85 @@ public class NRegistrationActivity extends BaseActivity implements View.OnClickL
         doctorView.setAdapter(doctorAdapter);
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        disableShowSoftInput();
+    /**
+     * 读取身份证信息赋值给界面
+     */
+    private void setData(CardInfo cardInfo) {
+        mEtName.setText(cardInfo.getName());
 
-        /*if (mPresenter != null) {
-            mPresenter.getDoctorInfo(CacheDataSource.getClinicId());
-        }*/
+        String birthday = cardInfo.getBirthday();
+        Logger.w("Main", birthday);
+
+        if (birthday != null) {
+            String year = birthday.substring(0, 4);
+            String month = birthday.substring(5, 7);
+            String day = birthday.substring(8, 10);
+            mEtYear.setText(year);
+            mEtMonth.setText(month);
+            mEtDay.setText(day);
+        }
+
+        if ("男".equals(cardInfo.getGender())) {
+            new_rgroup.check(R.id.new_rgboy);
+        } else if ("女".equals(cardInfo.getGender())) {
+            new_rgroup.check(R.id.new_rggirl);
+        } else {
+            new_rgroup.clearCheck();
+        }
+    }
+
+    private void startIDCardReader() {
+        Observable.interval(2500, TimeUnit.MILLISECONDS)
+                .observeOn(AndroidSchedulers.mainThread())
+                //延时3000 ，每间隔3000，时间单位
+                .subscribe(new Observer<Long>() {
+                    @Override
+                    public void onError(Throwable e) {
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+
+                    @Override
+                    public void onSubscribe(Disposable d) {
+
+                    }
+
+                    @Override
+                    public void onNext(Long aLong) {
+                        if (ReadCardUtils.isFindDevice(NRegistrationActivity.this)) {
+//                            isCardConnect = true;
+                            getsecondCardInfo();
+                        } else {
+//                            isCardConnect = false;
+                        }
+
+                    }
+                });
+    }
+
+    void getsecondCardInfo() {
+        ReadCardUtils.getAsyncInfo(NRegistrationActivity.this, new IDCardInfoCallback() {
+            @Override
+            public void getIDCardInfo(CardInfo cardInfo) {
+                if (cardInfo != null && cardInfo.getBirthday() != null) {
+                    tempCardInfo = cardInfo;
+                    mhandler.sendEmptyMessage(3);
+                }
+            }
+
+            @Override
+            public void errorInfo(int i, String s) {
+            }
+        });
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void regChageEventBus(String msg) {
+        Logger.d("BaseActivity", "[JPushReceiver] 接收到推送下来的: " + msg);
+        mPresenter.getDoctorInfo(CacheDataSource.getClinicId(), 1);
     }
 
     /**
@@ -457,7 +570,8 @@ public class NRegistrationActivity extends BaseActivity implements View.OnClickL
      */
     private List<Patient> search(CharSequence word) {
         String str = word.toString();
-        List<Patient> filterList = new ArrayList<>(); // 过滤后的list
+        // 过滤后的list
+        List<Patient> filterList = new ArrayList<>();
         if (CacheDataSource.getAllPatient() != null) {
             // 正则表达式 匹配以数字或者加号开头的字符串(包括了带空格及-分割的号码)
             if (str.matches("^([0-9]|[/+]).*")) {
@@ -780,6 +894,9 @@ public class NRegistrationActivity extends BaseActivity implements View.OnClickL
                     .addParam("timeS1", s1)
                     .addParam("timeS2", s2)
                     .addParam("timeS3", s3)
+                    .addParam("wait", quickRegistr.getWaitNum())
+                    .addParam("activity", mActivity)
+                    .addParam("mainThreadHandler", MyApplication.getMainThreadHandler())
                     .build()
                     .callAsyncCallbackOnMainThread((cc, result) -> {
                         if (result.isSuccess()) {
@@ -809,7 +926,7 @@ public class NRegistrationActivity extends BaseActivity implements View.OnClickL
     public void onDoctorResult(ArrayList<DoctorInfo> result) {
         mSwiperefreshlayout.setRefreshing(false);
         hideLoading();
-        mDoctorList = DoctorInfoCheck.transformationNoCheck(CacheDataSource.getClinicDoctorInfo());
+        mDoctorList = DoctorInfoCheck.transformation(CacheDataSource.getClinicDoctorInfo());
         doctorAdapter.setNewData(mDoctorList);
         doctorAdapter.notifyDataSetChanged();
     }

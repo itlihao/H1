@@ -1,22 +1,21 @@
 package com.hospital.s1m;
 
 import android.annotation.SuppressLint;
-import android.arch.lifecycle.Observer;
+import androidx.lifecycle.Observer;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.provider.Settings;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
-import android.support.v4.content.ContextCompat;
-import android.support.v4.widget.DrawerLayout;
-import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
+import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.FrameLayout;
@@ -26,8 +25,8 @@ import android.widget.TextView;
 
 import com.billy.cc.core.component.CC;
 import com.billy.cc.core.component.IComponentCallback;
-import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.hospital.s1m.adapter.DoctorItemAdapter;
+import com.hospital.s1m.adapter.SpacesItemDecoration;
 import com.hospital.s1m.lib_base.base.BaseActivity;
 import com.hospital.s1m.lib_base.constants.Components;
 import com.hospital.s1m.lib_base.constants.Formatter;
@@ -38,23 +37,26 @@ import com.hospital.s1m.lib_base.entity.DoctorInfo;
 import com.hospital.s1m.lib_base.entity.DoctorInfoCheck;
 import com.hospital.s1m.lib_base.entity.Patient;
 import com.hospital.s1m.lib_base.entity.RegistrCall;
+import com.hospital.s1m.lib_base.listener.CallInterface;
 import com.hospital.s1m.lib_base.model.RegistrationModel;
 import com.hospital.s1m.lib_base.presenter.RegistrationPresenter;
 import com.hospital.s1m.lib_base.utils.DeviceInfoUtils;
-import com.hospital.s1m.lib_base.utils.LiveDataBus;
 import com.hospital.s1m.lib_base.utils.Logger;
 import com.hospital.s1m.lib_base.utils.NetworkUtils;
 import com.hospital.s1m.lib_base.utils.ToastUtils;
 import com.hospital.s1m.lib_base.utils.Utils;
 import com.hospital.s1m.lib_base.view.MDDialog;
-import com.hospital.s1m.lib_base.view.MyGridLayoutManager;
+import com.jakewharton.rxbinding2.view.RxView;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author Lihao
@@ -65,10 +67,8 @@ public class RegistrationActivity extends BaseActivity implements View.OnClickLi
     private DrawerLayout mDrawerLayout;
 
     private RecyclerView doctorView;
-//    private MDDialog mDialog;
+    private DoctorItemAdapter doctorAdapter;
     private MDDialog mFullDialog;
-
-    private TextView mToast;
 
     private RelativeLayout mNetState;
 
@@ -86,6 +86,7 @@ public class RegistrationActivity extends BaseActivity implements View.OnClickLi
     private String periodType = null;
 
     private boolean isRegistration = false;
+    private BaseActivity mActivity;
 
     private MHandler mhandler = new MHandler();
 
@@ -95,10 +96,13 @@ public class RegistrationActivity extends BaseActivity implements View.OnClickLi
         public void handleMessage(Message msg) {
             switch (msg.what) {
                 case 1:
+                    isRegistration = false;
                     if (mDialog != null) {
                         mDialog.dismiss();
                         mDialog = null;
                     }
+                    break;
+                case 0:
                     break;
                 default:
                     break;
@@ -114,18 +118,12 @@ public class RegistrationActivity extends BaseActivity implements View.OnClickLi
 
         mPresenter = new RegistrationPresenter(RegistrationActivity.this, new RegistrationModel(), RegistrationActivity.this);
         mPresenter.getDoctorInfo(CacheDataSource.getClinicId(), 0);
+        mActivity = this;
         initData();
         initAdapter();
         onListener();
 
-        LiveDataBus.get().with("jpushMessage", String.class)
-                .observe(this, new Observer<String>() {
-                    @Override
-                    public void onChanged(@Nullable String info) {
-                        Logger.d("RegistrationActivity", "[JPushReceiver] 接收到推送下来的: " + info);
-                        refresh();
-                    }
-                });
+        EventBus.getDefault().register(this);
         String sn = DeviceInfoUtils.getDeviceSN();
         Logger.d("RegistrationActivity", "[sn]: " + sn);
     }
@@ -140,6 +138,10 @@ public class RegistrationActivity extends BaseActivity implements View.OnClickLi
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        if (EventBus.getDefault().isRegistered(this)) {
+            // 反注册EventBus
+            EventBus.getDefault().unregister(this);
+        }
     }
 
     @Override
@@ -153,14 +155,13 @@ public class RegistrationActivity extends BaseActivity implements View.OnClickLi
         return R.layout.activity_registration;
     }
 
-    @SuppressLint("SetTextI18n")
+    @SuppressLint({"SetTextI18n", "CheckResult"})
     private void initView() {
         ImageView mIvMenu = findViewById(R.id.iv_menu);
         mDrawerLayout = findViewById(R.id.drawer_layout);
         mDwMenu = findViewById(R.id.dw_fragment);
         doctorView = findViewById(R.id.rv_doctor_item);
         TextView mWelcome = findViewById(R.id.tv_welcome);
-        mToast = findViewById(R.id.tv_toast);
 
         mBtnGet = findViewById(R.id.btn_getNum);
 
@@ -171,10 +172,45 @@ public class RegistrationActivity extends BaseActivity implements View.OnClickLi
         mSwiperefreshlayout = findViewById(R.id.swiperefreshlayout);
         mSwiperefreshlayout.setColorSchemeColors(Color.rgb(47, 223, 189));
 
-        mIvMenu.setOnClickListener(this);
+        /*mIvMenu.setOnClickListener(this);
         mBtnGet.setOnClickListener(this);
         mNetText.setOnClickListener(this);
-        mNetClose.setOnClickListener(this);
+        mNetClose.setOnClickListener(this);*/
+
+        RxView.clicks(mBtnGet)
+                .throttleFirst(1, TimeUnit.SECONDS)
+                .subscribe(o -> {
+                    if (!isRegistration) {
+                        isRegistration = true;
+                        mPresenter.quickRegistration(CacheDataSource.getClinicId(), sysUserId, periodType);
+                    } else {
+                        ToastUtils.showToast(RegistrationActivity.this, "请勿重复点击");
+                    }
+                });
+
+        RxView.clicks(mIvMenu)
+                .throttleFirst(1, TimeUnit.SECONDS)
+                .subscribe(o -> {
+                    //cc调用lib_user侧滑界面
+                    mDrawerLayout.openDrawer(mDwMenu);
+                    CC.obtainBuilder(Components.COMPONENT_USER)
+                            .setActionName(Components.COMPONENT_USER_MENU)
+                            .build()
+                            .callAsyncCallbackOnMainThread(fragmentdrawer);
+                });
+
+        RxView.clicks(mNetText)
+                .throttleFirst(1, TimeUnit.SECONDS)
+                .subscribe(o -> {
+                    Intent intent = new Intent(Settings.ACTION_WIFI_SETTINGS);
+                    startActivity(intent);
+                });
+
+        RxView.clicks(mNetClose)
+                .throttleFirst(1, TimeUnit.SECONDS)
+                .subscribe(o -> {
+                    mNetState.setVisibility(View.GONE);
+                });
 
         mSwiperefreshlayout.setOnRefreshListener(this::refresh);
 
@@ -189,128 +225,56 @@ public class RegistrationActivity extends BaseActivity implements View.OnClickLi
 
     private void initData() {
         mDoctorList = DoctorInfoCheck.transformationNoCheck(CacheDataSource.getClinicDoctorInfo());
-
-        List<DoctorInfoCheck> list = new ArrayList<>(mDoctorList);
-        filter(list, t -> {
-            if (t.isUnFirstRegi() || t.isFulled()) {
+        resId = R.layout.item_doctor_line;
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false) {
+            @Override
+            public boolean canScrollVertically() {
                 return true;
             }
-            return false;
-        });
+        };
 
-        if (list.size() ==0 || mDoctorList.size() == 0) {
-            mToast.setText("医生号源已约满，请用致医云诊室+小程序预约近期号源");
-            mBtnGet.setClickable(false);
-            mBtnGet.setBackground(ContextCompat.getDrawable(this, R.drawable.main_shape_btn_unclick));
-        } else {
-            mToast.setText("请选择医生取号，若未选择医生系统将自动为您分配");
-            mBtnGet.setClickable(true);
-            mBtnGet.setBackground(ContextCompat.getDrawable(this, R.drawable.main_shape_btn));
-        }
-
-        if (mDoctorList.size() <= 2) {
-            resId = R.layout.item_doctor_high_wide;
-        } else if (mDoctorList.size() == 3) {
-            resId = R.layout.item_doctor_low_wide;
-        } else if (mDoctorList.size() == 4) {
-            resId = R.layout.item_doctor_high_narrow;
-        } else {
-            resId = R.layout.item_doctor_low_narrow;
-        }
-
-        if (mDoctorList.size() <= 3) {
-            LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false) {
-                @Override
-                public boolean canScrollVertically() {
-                    return true;
-                }
-            };
-            doctorView.setLayoutManager(linearLayoutManager);
-        } else {
-            MyGridLayoutManager gridLayoutManager = new MyGridLayoutManager(this, 2);
-            gridLayoutManager.setScrollEnabled(true);
-            doctorView.setLayoutManager(gridLayoutManager);
-        }
-    }
-
-    public void filter(Collection<DoctorInfoCheck> collection, Filter filter) {
-        for (Iterator<DoctorInfoCheck> iterator = collection.iterator(); iterator.hasNext();) {
-            DoctorInfoCheck infoCheck = iterator.next();
-            if (filter.isUnFirstRegi(infoCheck)) {
-                iterator.remove();
-            }
-        }
-    }
-
-    interface Filter {
-         boolean isUnFirstRegi(com.hospital.s1m.lib_base.entity.DoctorInfoCheck t);
+        SpacesItemDecoration itemDecoration = new SpacesItemDecoration(18);
+        doctorView.setLayoutManager(linearLayoutManager);
+        doctorView.addItemDecoration(itemDecoration);
     }
 
     private void initAdapter() {
-        DoctorItemAdapter doctorAdapter = new DoctorItemAdapter(this, resId, mDoctorList);
+        doctorAdapter = new DoctorItemAdapter(this, resId, mDoctorList);
         doctorView.setAdapter(doctorAdapter);
-        doctorAdapter.setOnItemClickListener((adapter, view, position) -> {
-            DoctorInfoCheck infoCheck = (DoctorInfoCheck) adapter.getItem(position);
-            assert infoCheck != null;
-
-            if (infoCheck.isFulled()) {
-                return;
-            }
-            sysUserId = infoCheck.getDoctorId();
-            setCheck(adapter, position);
-        });
+        doctorAdapter.setCallInterface(itemClick);
     }
 
+    @SuppressLint("CheckResult")
     private void onListener() {
-        mDrawerLayout.addDrawerListener(new DrawerLayout.DrawerListener() {
-            @Override
-            public void onDrawerSlide(@NonNull View drawerView, float slideOffset) {
-
-            }
-
-            @Override
-            public void onDrawerOpened(@NonNull View drawerView) {
-                //动态添加fragment进来
-                CC.obtainBuilder(Components.COMPONENT_USER)
-                        .setActionName(Components.COMPONENT_USER_MENU)
-                        .build()
-                        .callAsyncCallbackOnMainThread(fragmentdrawer);
-            }
-
-            @Override
-            public void onDrawerClosed(@NonNull View drawerView) {
-
-            }
-
-            @Override
-            public void onDrawerStateChanged(int newState) {
-
-            }
+        RxView.drags(mDrawerLayout).subscribe(dragEvent -> {
+            //动态添加fragment进来
+            CC.obtainBuilder(Components.COMPONENT_USER)
+                    .setActionName(Components.COMPONENT_USER_MENU)
+                    .build()
+                    .callAsyncCallbackOnMainThread(fragmentdrawer);
         });
     }
 
-    private void setCheck(BaseQuickAdapter adapter, int position) {
-        if (adapter instanceof DoctorItemAdapter) {
-            DoctorInfoCheck item = (DoctorInfoCheck) adapter.getItem(position);
-            DoctorItemAdapter adapter1 = (DoctorItemAdapter) adapter;
-            int preCheck = adapter1.getPreCheck();
-            if (preCheck >= 0) {
-                DoctorInfoCheck item1 = adapter1.getItem(preCheck);
-                Objects.requireNonNull(item1).setCheck(false);
-            }
-            if (preCheck == position) {
-                adapter1.setPreCheck(-1);
-                adapter.notifyDataSetChanged();
-                sysUserId = "";
+    private CallInterface itemClick = new CallInterface() {
+        @Override
+        public void getNum(String sysUserId, boolean isFulled) {
+            if (!"T117181700815".equals(DeviceInfoUtils.getDeviceSN())) {
+                ToastUtils.showToast(RegistrationActivity.this, "该诊所暂不提供快速挂号服务，请联系客服！");
                 return;
             }
 
-            Objects.requireNonNull(item).setCheck(true);
-            adapter1.setPreCheck(position);
-            adapter.notifyDataSetChanged();
+            if (isFulled) {
+                return;
+            }
 
+            if (!Utils.isFastClick() && !isRegistration) {
+                isRegistration = true;
+                mPresenter.quickRegistration(CacheDataSource.getClinicId(), sysUserId, periodType);
+            } else {
+                ToastUtils.showToast(RegistrationActivity.this, "请勿重复点击");
+            }
         }
-    }
+    };
 
     @Override
     public void onClick(View v) {
@@ -366,6 +330,12 @@ public class RegistrationActivity extends BaseActivity implements View.OnClickLi
         mPresenter.getDoctorInfo(CacheDataSource.getClinicId(), 1);
     }
 
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void regChageEventBus(String msg) {
+        Logger.d("BaseActivity", "[JPushReceiver] 接收到推送下来的: " + msg);
+        mPresenter.getDoctorInfo(CacheDataSource.getClinicId(), 1);
+    }
+
     @SuppressLint("DefaultLocale")
     @Override
     public void onQuickRegistration(RegistrCall quickRegistr) {
@@ -400,8 +370,14 @@ public class RegistrationActivity extends BaseActivity implements View.OnClickLi
                     .addParam("timeS2", s2)
                     .addParam("timeS3", s3)
                     .addParam("wait", quickRegistr.getWaitNum())
+                    .addParam("activity", mActivity)
+                    .addParam("mainThreadHandler", MyApplication.getMainThreadHandler())
                     .build()
-                    .callAsyncCallbackOnMainThread((cc, result) -> hideLoading());
+                    .callAsyncCallbackOnMainThread((cc, result) -> {
+                                isRegistration = false;
+                                hideLoading();
+                            }
+                    );
         } else {
             mDialog = new MDDialog.Builder(RegistrationActivity.this)
                     .setShowTitle(false)
@@ -418,7 +394,7 @@ public class RegistrationActivity extends BaseActivity implements View.OnClickLi
             mDialog.show();
             mhandler.sendEmptyMessageDelayed(1, 1500);
         }
-        mhandler.postDelayed(() -> isRegistration = false, 1550);
+//        mhandler.postDelayed(() -> isRegistration = false, 1550);
 
     }
 
@@ -426,8 +402,16 @@ public class RegistrationActivity extends BaseActivity implements View.OnClickLi
     public void onDoctorResult(ArrayList<DoctorInfo> result) {
         mSwiperefreshlayout.setRefreshing(false);
         if (result != null) {
-            initData();
-            initAdapter();
+//            initData();
+//            initAdapter();
+            mDoctorList = DoctorInfoCheck.transformationNoCheck(CacheDataSource.getClinicDoctorInfo());
+            doctorAdapter.setNewData(mDoctorList);
+            doctorAdapter.notifyDataSetChanged();
+
+            if (mDoctorList.size() == 0) {
+                View headView = LayoutInflater.from(this).inflate(R.layout.empty_view, null);
+                doctorAdapter.setEmptyView(headView);
+            }
         }
 
         hideLoading();

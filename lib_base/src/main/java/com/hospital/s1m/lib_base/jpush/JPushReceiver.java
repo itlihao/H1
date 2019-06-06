@@ -6,9 +6,9 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
 
-import com.hospital.s1m.lib_base.utils.LiveDataBus;
 import com.hospital.s1m.lib_base.utils.Logger;
 
+import org.greenrobot.eventbus.EventBus;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -44,7 +44,7 @@ public class JPushReceiver extends BroadcastReceiver {
                 if (bundle != null) {
                     String message = bundle.getString(JPushInterface.EXTRA_MESSAGE);
                     Logger.d(TAG, "[JPushReceiver] 接收到推送下来的自定义消息: " + message);
-                    LiveDataBus.get().with("jpushMessage").setValue(message);
+                    EventBus.getDefault().post(message);
                 }
 
             } else if (JPushInterface.ACTION_NOTIFICATION_RECEIVED.equals(intent.getAction())) {

@@ -2,49 +2,35 @@ package com.hospital.s1m.lib_base.constants;
 
 /**
  * Created by wyl on 2017/6/10
+ *
+ * @author Lihao
  */
 public interface Urls {
-    String usercenter = "http://bt-usercenter.yunzhenshi.com.cn";//登录前和登录
-//    String workbench = "http://bt-workbench.yunzhenshi.com.cn";//登录前和登录
-    String workbench = "https://bt-hm.zhiyimall.com";
-    String patient = "http://bt-patientcenter.yunzhenshi.com.cn";//患者
+    // beta地址
+//    String WORKBENCH = "https://bt-hm.zhiyimall.com";
+//    String QRURL = "https://bt-clinicpe.yunzhenshi.com";
+//    String PATIENT = "http://bt-patientcenter.yunzhenshi.com.cn";
+
+    // 线上地址
+     String WORKBENCH = "https://quick.yunzhenshi.com";
+     String QRURL = "https://clinicpe.zhiyijiankang.com";
+     String PATIENT = "http://patient.yunzhenshi.com/";
+
 
 //   String usercenter="http://192.168.15.232";//登录前和登录
-//   String workbench="http://192.168.14.33:8080";//登录前和登录
-//   String patient="http://192.168.15.237";
+//   String WORKBENCH="http://192.168.14.33:8080";//登录前和登录
+//   String PATIENT="http://192.168.15.237";
 
-//    String usercenter = "http://usersystem.yunzhenshi.com";//登录前和登录
-//    String workbench = "http://workbench.yunzhenshi.com";//登录前和登录
-//    String patient="http://patient.yunzhenshi.com";//患者
-
-    String beforlogin = "/login/beforeLogin";//登录前
-    String login = "/login/login";//登录
-    String findList = "/precontract/findList";//已预约患者查询
-    String joinRegistration = "/precontract/joinRegistration";//将患者加入待就诊
-    String findRegistrationByPage = "/registration/findRegistrationByPage";//分页查询挂号列表
-    String savePatientAndRegistration = "/registration/savePatientAndRegistration";//添加待就诊
-    String changeStatus = "/registration/changeStatus";//叫号
-    String getListByClinicId = "/clinicEmploy/getListByClinicId";//获取医生Id
-    String getRegistrationCount = "/registration/getRegistrationCount";//获取登录医生的当天叫号统计
-    String createCancelPrescription = "/prescription/createCancelPrescription";//接诊接口
-    String getQrcodeOfClinic = "/qrcode/getQrcodeOfClinic";//接诊接口
-    String findClinicNotice = "/clinic/findClinicNotice";//获取公告
-    String saveClinicNotice = "/clinic/saveClinicNotice";//设置公告
-    String getClinicSetting = "/arEmployTimetable/getClinicSetting";//排班-获取排班设置信息
-    String updateClinicSetting = "/arEmployTimetable/updateClinicSetting";//排班-保存排班设置信息
-
-    String CANCEL_REGISTRATION = "/registration/changeStatus";
-    String GET_RESET_PWD_CODE = "/login/sendResetPasswordMsg";
-    String RESET_PASSWORD = "/login/resetPassword";
+    // 登录
+    String LOGIN = "/login/login";
+    // 添加待就诊
+    String SAVE_PATIENT_AND_REGISTRATION = "/registration/savePatientAndRegistration";
+    // 获取所有患者
     String GET_ALL_PATIENT = "/clinicPatient/syClinicPatient";
-
-    String getCloseList = "/arBreakTime/get";//获取停诊设置
-    String delCloseList = "/arBreakTime/del";//获取停诊设置
-    String addCloseList = "/arBreakTime/update";//获取停诊设置
-
 
     // 医生列表
     String GET_EMPLOY_LIST = "/clinicEmploy/getEmployList";
     // 快速挂号
     String QUICK_REGISTRATION = "/registration/firstRegisration";
+    String QUICK_REGISTRATION_ID = "/registration/firstRegistrationBySysId";
 }

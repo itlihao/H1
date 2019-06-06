@@ -5,7 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.support.v7.widget.AppCompatCheckBox;
+import androidx.appcompat.widget.AppCompatCheckBox;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
@@ -24,9 +24,13 @@ import com.hospital.s1m.lib_user.R;
 import com.hospital.s1m.lib_user.bean.LoginParmar;
 import com.hospital.s1m.lib_user.model.LoginModel;
 import com.hospital.s1m.lib_user.presenter.LoginPresenter;
+import com.jakewharton.rxbinding2.view.RxView;
 
+import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import io.reactivex.functions.Consumer;
 
 /**
  * @author Lihao
@@ -76,6 +80,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
         }
     }
 
+    @SuppressLint("CheckResult")
     private void initView() {
         mUserTel = findViewById(R.id.et_login_username);
         mUserPwd = findViewById(R.id.et_login_password);
@@ -84,8 +89,15 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
         TextView mForgetPwd = findViewById(R.id.forget_pwd);
         Button mBtnLogin = findViewById(R.id.btn_login);
 
-        mForgetPwd.setOnClickListener(this);
-        mBtnLogin.setOnClickListener(this);
+        RxView.clicks(mBtnLogin)
+                .throttleFirst(2, TimeUnit.SECONDS)
+                .subscribe(new Consumer<Object>() {
+                    @Override
+                    public void accept(Object o) throws Exception {
+                        doLogin();
+                    }
+                });
+//        mBtnLogin.setOnClickListener(this);
     }
 
     @SuppressLint("SetTextI18n")
